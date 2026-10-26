@@ -1,0 +1,9 @@
+@import "tailwindcss/theme";
+@import "tailwindcss/utilities";
+@source "../../../../packages/ui/src";
+@theme {
+  --font-sans: "DM Sans", sans-serif;
+  --font-display: "DM Serif Display", Georgia, serif;
+  --color-sizzle: #e36445;
+}
+/* Preflight is intentionally omitted to preserve the approved prototype's appearance. */

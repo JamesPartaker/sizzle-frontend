@@ -1,0 +1,134 @@
+.mini-menu .menu-title {
+  white-space: pre-line;
+}
+.modal-shade {
+  position: fixed;
+  inset: 0;
+  background: #38271c55;
+  backdrop-filter: blur(3px);
+  z-index: 100;
+}
+.dialog-content {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 101;
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+}
+.design-preview-modal.dialog-content {
+  overflow: hidden;
+}
+.action-popover {
+  position: relative;
+  top: auto;
+  right: auto;
+  z-index: 110;
+  min-width: 165px;
+}
+.action-popover [role="menuitem"] {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px;
+  font-size: 11px;
+  border-radius: 3px;
+  cursor: pointer;
+  outline: none;
+}
+.action-popover [role="menuitem"][data-highlighted] {
+  background: #f8f3ee;
+}
+.action-popover svg {
+  width: 14px;
+  height: 14px;
+}
+.validation-error {
+  color: #b34c3c;
+  font-size: 11px;
+  margin: 8px 0;
+}
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+.design-preview-trigger {
+  border: 0;
+  padding: 0;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+}
+.template-preview {
+  width: 100%;
+  border: 0;
+  padding: 0;
+  color: inherit;
+}
+.inline-undo {
+  color: inherit;
+  text-decoration: underline;
+  margin-left: 14px;
+}
+#toast {
+  left: calc(50% + 130px);
+}
+.upload-zone.dragging {
+  background: #d6eafb;
+}
+.preview-footer .modal-actions {
+  flex-shrink: 0;
+}
+.order-summary-total {
+  border-top: 0;
+  padding-top: 17px;
+}
+.page-error {
+  padding: 40px 0;
+  color: #a45038;
+}
+@media (max-width: 800px) {
+  #toast {
+    left: 55%;
+  }
+}
+@media (max-width: 540px) {
+  #toast {
+    left: 50%;
+  }
+  .dialog-content {
+    max-width: calc(100vw - 24px);
+  }
+  .design-preview-modal.dialog-content {
+    max-height: calc(100dvh - 24px);
+  }
+  .design-card .design-preview-trigger {
+    width: 115px;
+  }
+  .orders .table-head {
+    display: none;
+  }
+}
+.mobile-nav-shade {
+  position: fixed;
+  inset: 0;
+  background: #2226;
+  z-index: 9;
+}
+.sidebar.mobile-open {
+  box-shadow: none;
+}
+.brand-swatch {
+  width: 28px;
+  height: 65px;
+  border-radius: 15px;
+  display: block;
+}
+.brand-swatch:nth-child(2) {
+  border: 1px solid #ddd;
+}

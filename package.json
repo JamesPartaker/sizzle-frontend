@@ -1,0 +1,24 @@
+{
+  "name": "sizzle",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.12.1",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @sizzle/restaurant dev",
+    "build": "pnpm --filter @sizzle/restaurant build",
+    "preview": "pnpm --filter @sizzle/restaurant preview",
+    "typecheck": "pnpm --filter @sizzle/restaurant typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "vitest": "^5.0.5",
+    "typescript": "~5.9.3",
+    "@types/node": "^26.6.5"
+  }
+}
