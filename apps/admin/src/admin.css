@@ -1,0 +1,35 @@
+.skip-link { position: fixed; left: 16px; top: -100px; z-index: 300; padding: 12px; background: white; }
+.skip-link:focus { top: 12px; }
+.admin-demo-note { font-size: 11px; margin: -12px 0 24px; }
+.admin-toolbar { flex-wrap: wrap; }
+.admin-toolbar .search { min-width: 220px; flex: 1; }
+.admin-results-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 11px; color: var(--muted); margin: 18px 0 12px; }
+.admin-results-meta label { display: flex; align-items: center; gap: 10px; }
+.admin-results-meta select { padding: 7px 10px; }
+.admin-table-wrap { overflow-x: auto; border-radius: 7px; }
+.admin-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 11px; white-space: nowrap; }
+.admin-table th { background: #f7f5f4; color: var(--muted); font-size: 10px; font-weight: 500; padding: 12px 14px; }
+.admin-table td { padding: 8px 14px; height: 53px; border-bottom: 1px solid #f4f0ed; }
+.admin-table tr:hover td { background: #faf7f4; }
+.admin-table strong { display: block; font-size: 11px; font-weight: 550; }
+.admin-table small { display: block; font-size: 10px; color: var(--muted); margin-top: 3px; }
+.admin-record { display: flex; gap: 12px; align-items: center; }
+.admin-thumb { display: grid; place-items: center; width: 29px; height: 35px; background: #ffe4d6; color: #aa7256; border-radius: 4px; }
+.admin-thumb.lavender { background: #eee4fc; color: #9472af; }
+.admin-thumb svg { width: 15px; }
+.admin-edit { padding: 7px 10px; font-size: 10px; white-space: nowrap; }
+.admin-edit svg { width: 13px; height: 13px; }
+.admin-pagination { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; font-size: 11px; color: var(--muted); }
+.admin-pagination > div { display: flex; gap: 8px; }
+button:disabled { cursor: default; opacity: .45; }
+.admin-form input, .admin-form select { width: 100%; background: #f7f5f4; border: 1px solid var(--line); border-radius: 6px; padding: 11px; }
+.admin-notice { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; margin-bottom: 20px; background: #edf4e9; border-radius: 7px; font-size: 12px; }
+@media (max-width: 540px) {
+  .admin-results-meta { flex-wrap: wrap; }
+  .admin-toolbar .search { flex-basis: 100%; }
+  .admin-pagination .btn { font-size: 11px; padding: 9px; }
+}
+/* Keep wide tables inside their own scroll region on mobile browsers. */
+html, body { overflow-x: hidden; }
+.main { min-width: 0; }
+.admin-table-wrap { max-width: 100%; contain: inline-size paint; }

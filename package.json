@@ -8,12 +8,15 @@
   },
   "scripts": {
     "dev": "pnpm --filter @sizzle/restaurant dev",
-    "build": "pnpm --filter @sizzle/restaurant build",
+    "build": "pnpm -r build",
     "preview": "pnpm --filter @sizzle/restaurant preview",
-    "typecheck": "pnpm --filter @sizzle/restaurant typecheck",
+    "typecheck": "pnpm -r typecheck",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "dev:admin": "pnpm --filter @sizzle/admin dev",
+    "preview:admin": "pnpm --filter @sizzle/admin preview",
+    "test:e2e:admin": "playwright test --config playwright.admin.config.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",
