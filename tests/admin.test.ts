@@ -1,15 +1,17 @@
 import { expect, it } from "vitest";
 import { adminRepository } from "../apps/admin/src/data";
-const request = { q: "", status: "", limit: 25 as const, cursor: null, sort: "updated_desc" as const };
-it("bounds pages and traverses every cursor without duplicate records", async () => {
+const request = { q: "", status: "", limit: 25 as const, page: 1, sort: "updated_desc" as const };
+it("bounds pages and traverses every page without duplicate records", async () => {
   const seen = new Set<string>();
-  let cursor: string | null = null;
+  let number = 1;
+  let total = 1;
   do {
-    const page = await adminRepository.search("templates", { ...request, cursor }, new AbortController().signal);
+    const page = await adminRepository.search("templates", { ...request, page: number }, new AbortController().signal);
     expect(page.items.length).toBeLessThanOrEqual(25);
     for (const item of page.items) { expect(seen.has(item.id)).toBe(false); seen.add(item.id); }
-    cursor = page.nextCursor;
-  } while (cursor);
+    total = Math.ceil(page.totalItems / request.limit);
+    number++;
+  } while (number <= total);
   expect(seen.size).toBe(137);
 });
 it("combines search/status, returns empty results, and cancels obsolete work", async () => {
@@ -30,4 +32,18 @@ it("updates only the selected user or order in the demo repository", async () =>
   await adminRepository.updateOrderStatus("ORD-1000", "Shipped");
   const orders = await adminRepository.search("orders", { ...request, q: "ORD-1000" }, new AbortController().signal);
   expect(orders.items[0].status).toBe("Shipped");
+});
+
+import { paginationPages } from "../apps/admin/src/pagination";
+it("shows the first/last pages and neighbours with ellipses", () => {
+  expect(paginationPages(10, 100)).toEqual([1, "ellipsis", 8, 9, 10, 11, 12, "ellipsis", 100]);
+  expect(paginationPages(1, 1)).toEqual([1]);
+  expect(paginationPages(1, 6)).toEqual([1, 2, 3, "ellipsis", 6]);
+  expect(paginationPages(100, 100)).toEqual([1, "ellipsis", 98, 99, 100]);
+});
+it("jumps directly to the last bounded page", async () => {
+  const last = await adminRepository.search("templates", { ...request, page: 6 }, new AbortController().signal);
+  expect(last.totalItems).toBe(137);
+  expect(last.items).toHaveLength(12);
+  expect(last.items[0].id).toBe("TEM-1125");
 });

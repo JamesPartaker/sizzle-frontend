@@ -7,7 +7,7 @@ import PageFooter from "../../restaurant/src/components/PageFooter.vue";
 import { adminRepository, statuses, type AdminRecord, type Kind } from "./data";
 import { useAdminSearch } from "./useAdminSearch";
 const props = defineProps<{ kind: Kind }>();
-const { search, status, limit, sort, page, query, waiting, next, previous } = useAdminSearch(props.kind);
+const { search, status, limit, sort, page, totalPages, pageNumbers, goTo, query, waiting, next, previous } = useAdminSearch(props.kind);
 const titles = { templates: "All templates.", designs: "Every design, one place.", users: "The people behind the menus.", orders: "Keep good things moving." };
 const descriptions = { templates: "Find and review templates across the Sizzle library.", designs: "Search designs from every restaurant workspace.", users: "Find a user and keep their account details up to date.", orders: "Find print orders and manage their progress." };
 const selected = ref<AdminRecord | null>(null);
@@ -68,7 +68,15 @@ const money = (value: number) => new Intl.NumberFormat("en-CA", { style: "curren
       <tr v-if="!rows.length"><td :colspan="kind === 'users' || kind === 'orders' ? 5 : 4" class="empty">{{ waiting ? 'Loading results…' : 'No matching records. Try another search or clear your filters.' }}</td></tr>
     </tbody></table>
   </div>
-  <nav class="admin-pagination" aria-label="Results pagination"><span>Page {{ page + 1 }}</span><div><button class="btn" :disabled="page === 0 || waiting" @click="previous"><AppIcon name="back" />Previous</button><button class="btn" :disabled="!query.data.value?.nextCursor || waiting || !!query.error.value" @click="next">Next<AppIcon name="arrow" /></button></div></nav>
+  <nav class="admin-pagination" aria-label="Results pagination">
+    <span class="sr-only" role="status">Page {{ page + 1 }}</span>
+    <button class="btn" :disabled="page === 0 || waiting || query.isError.value" @click="previous">Prev</button>
+    <template v-for="(number, index) in pageNumbers" :key="`${index}-${number}`">
+      <span v-if="number === 'ellipsis'" class="pagination-ellipsis" aria-hidden="true">…</span>
+      <button v-else :class="['btn', { 'current-page': number === page + 1 }]" :aria-label="`Go to page ${number}`" :aria-current="number === page + 1 ? 'page' : undefined" :disabled="waiting || query.isError.value" @click="goTo(number)">{{ number }}</button>
+    </template>
+    <button class="btn" :disabled="page + 1 >= totalPages || waiting || query.isError.value" @click="next">Next</button>
+  </nav>
   <PageFooter />
   <AppDialog :open="open" :title="kind === 'users' ? 'Update user details' : 'Update order status'" :description="`${selected?.id} · ${selected?.name}`" @update:open="value => { if (!save.isPending.value) open = value; }">
     <form class="admin-form" @submit.prevent="submit">

@@ -11,10 +11,10 @@ export interface AdminRecord {
 }
 export interface SearchRequest {
   q: string; status: string; limit: 25 | 50 | 100;
-  cursor: string | null;
+  page: number;
   sort: "updated_desc" | "name_asc";
 }
-export interface SearchPage { items: AdminRecord[]; nextCursor: string | null }
+export interface SearchPage { items: AdminRecord[]; totalItems: number }
 export interface AdminRepository {
   search(kind: Kind, request: SearchRequest, signal: AbortSignal): Promise<SearchPage>;
   updateUser(id: string, details: Pick<AdminRecord, "name" | "email" | "restaurant" | "status">): Promise<void>;
@@ -43,10 +43,10 @@ function abortableDelay(signal: AbortSignal) {
     signal.addEventListener("abort", abort, { once: true });
   });
 }
-/** Demo only: generates at most one page (+ one lookahead), never a full record array.
- * Replace this repository with a server adapter; do not fetch-all then filter here.
- * Server contract: opaque keyset cursor, indexed filters, deterministic sort + ID
- * tie-breaker, enforced limit <= 100, and no required COUNT(*) per keystroke.
+/** Demo only: returns a single bounded page and count metadata.
+ * Replace with server-side filtering/sorting/pagination; never fetch all records.
+ * The server should index filters/sorts (with an ID tie-breaker), enforce limit <= 100,
+ * and cache counts per search rather than recounting on every page navigation.
  */
 export const adminRepository: AdminRepository = {
   async search(kind, request, signal) {
@@ -57,15 +57,16 @@ export const adminRepository: AdminRepository = {
     const indexes = Array.from({ length: 137 }, (_, i) => i);
     if (request.sort === "name_asc") indexes.sort((a, b) => record(kind, a).name.localeCompare(record(kind, b).name) || a - b);
     const items: AdminRecord[] = [];
-    let position = Number(request.cursor || 0);
-    for (; position < indexes.length; position++) {
+    const offset = (request.page - 1) * request.limit;
+    let totalItems = 0;
+    for (const index of indexes) {
       signal.throwIfAborted();
-      const row = record(kind, indexes[position]);
+      const row = record(kind, index);
       if (!matches(row)) continue;
-      if (items.length === request.limit) return { items, nextCursor: String(position) };
-      items.push(row);
+      if (totalItems >= offset && items.length < request.limit) items.push(row);
+      totalItems++;
     }
-    return { items, nextCursor: null };
+    return { items, totalItems };
   },
   async updateUser(id, details) { overrides.set(id, { ...overrides.get(id), ...details }); },
   async updateOrderStatus(id, status) { overrides.set(id, { ...overrides.get(id), status }); },
