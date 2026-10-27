@@ -8,11 +8,13 @@ import "../../restaurant/src/assets/vue.css";
 import "./admin.css";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior: (_to, _from, savedPosition) => savedPosition || { top: 0 },
   routes: [
     { path: "/", redirect: "/templates" },
     ...["templates", "designs", "users", "orders"].map((kind) => ({
       path: `/${kind}`, name: kind, component: SearchView, props: { kind },
     })),
+    { path: "/orders/:id", name: "order-details", component: () => import("./OrderDetailsView.vue") },
     { path: "/:pathMatch(.*)*", component: () => import("./NotFound.vue") },
   ],
 });

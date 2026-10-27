@@ -19,12 +19,11 @@ const client = useQueryClient();
 const save = useMutation({
   mutationFn: async () => {
     const id = selected.value!.id;
-    if (props.kind === "users") await adminRepository.updateUser(id, { name: form.name.trim(), email: form.email.trim(), restaurant: form.restaurant.trim(), status: form.status });
-    else await adminRepository.updateOrderStatus(id, form.status);
+    await adminRepository.updateUser(id, { name: form.name.trim(), email: form.email.trim(), restaurant: form.restaurant.trim(), status: form.status });
   },
   onSuccess: async () => {
     open.value = false;
-    notice.value = props.kind === "users" ? "User details updated in this demo session." : "Order status updated in this demo session.";
+    notice.value = "User details updated in this demo session.";
     await client.invalidateQueries({ queryKey: ["admin", props.kind] });
   },
 });
@@ -63,7 +62,10 @@ const money = (value: number) => new Intl.NumberFormat("en-CA", { style: "curren
         <td><template v-if="kind === 'templates'">{{ row.type }}</template><template v-else><strong>{{ row.restaurant }}</strong><small>{{ row.email }}</small></template></td>
         <td><span :class="['badge', { orange: ['Pending', 'In production', 'Invited', 'Draft'].includes(row.status), gray: ['Archived', 'Cancelled', 'Suspended'].includes(row.status) }]">{{ row.status }}</span></td>
         <td><template v-if="kind === 'orders'"><strong>{{ money(row.total) }} CAD</strong><small>{{ row.quantity }} copies · {{ date(row.updatedAt) }}</small></template><template v-else>{{ date(row.updatedAt) }}</template></td>
-        <td v-if="kind === 'users' || kind === 'orders'"><button class="btn admin-edit" :aria-label="`${kind === 'users' ? 'Edit user' : 'Update status for'} ${row.id}`" @click="edit(row)"><AppIcon name="edit" />{{ kind === 'users' ? 'Edit user' : 'Update status' }}</button></td>
+        <td v-if="kind === 'users' || kind === 'orders'">
+          <RouterLink v-if="kind === 'orders'" class="btn admin-edit" :to="`/orders/${row.id}`" :aria-label="`View order ${row.id}`">View order<AppIcon name="chevron" /></RouterLink>
+          <button v-else class="btn admin-edit" :aria-label="`Edit user ${row.id}`" @click="edit(row)"><AppIcon name="edit" />Edit user</button>
+        </td>
       </tr>
       <tr v-if="!rows.length"><td :colspan="kind === 'users' || kind === 'orders' ? 5 : 4" class="empty">{{ waiting ? 'Loading results…' : 'No matching records. Try another search or clear your filters.' }}</td></tr>
     </tbody></table>
@@ -78,10 +80,10 @@ const money = (value: number) => new Intl.NumberFormat("en-CA", { style: "curren
     <button class="btn" :disabled="page + 1 >= totalPages || waiting || query.isError.value" @click="next">Next</button>
   </nav>
   <PageFooter />
-  <AppDialog :open="open" :title="kind === 'users' ? 'Update user details' : 'Update order status'" :description="`${selected?.id} · ${selected?.name}`" @update:open="value => { if (!save.isPending.value) open = value; }">
+  <AppDialog v-if="kind === 'users'" :open="open" title="Update user details" :description="`${selected?.id} · ${selected?.name}`" @update:open="value => { if (!save.isPending.value) open = value; }">
     <form class="admin-form" @submit.prevent="submit">
       <template v-if="kind === 'users'"><label for="user-name">Full name</label><input id="user-name" v-model="form.name" required maxlength="100" autocomplete="name" /><label for="user-email">Email address</label><input id="user-email" v-model="form.email" type="email" required maxlength="254" autocomplete="email" /><label for="user-restaurant">Restaurant</label><input id="user-restaurant" v-model="form.restaurant" required maxlength="160" autocomplete="organization" /></template>
-      <label for="record-status">{{ kind === 'users' ? 'Account status' : 'Order status' }}</label><select id="record-status" v-model="form.status"><option v-for="s in statuses[kind]" :key="s">{{ s }}</option></select>
+      <label for="record-status">Account status</label><select id="record-status" v-model="form.status"><option v-for="s in statuses[kind]" :key="s">{{ s }}</option></select>
       <p v-if="validation || save.error.value" class="validation-error" role="alert">{{ validation || 'Couldn’t save changes. Please try again.' }}</p>
       <div class="modal-actions"><button type="button" class="btn" :disabled="save.isPending.value" @click="open = false">Cancel</button><button class="btn primary" type="submit" :disabled="save.isPending.value">{{ save.isPending.value ? 'Saving…' : 'Save changes' }}</button></div>
     </form>

@@ -47,3 +47,13 @@ it("jumps directly to the last bounded page", async () => {
   expect(last.items).toHaveLength(12);
   expect(last.items[0].id).toBe("TEM-1125");
 });
+it("loads a single complete order and handles unknown order IDs", async () => {
+  const signal = new AbortController().signal;
+  const order = await adminRepository.getOrder("ORD-1000", signal);
+  expect(order?.id).toBe("ORD-1000");
+  expect(order?.items[0].quantity).toBe(order?.quantity);
+  expect(order!.subtotal + order!.shipping + order!.tax).toBeCloseTo(order!.total, 2);
+  expect(order?.shippingAddress.length).toBeGreaterThan(0);
+  await expect(adminRepository.getOrder("ORD-9999", signal)).resolves.toBeNull();
+  await expect(adminRepository.getOrder("invalid", signal)).resolves.toBeNull();
+});

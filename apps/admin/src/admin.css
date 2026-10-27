@@ -35,3 +35,19 @@ button:disabled { cursor: default; opacity: .45; }
 html, body { overflow-x: hidden; }
 .main { min-width: 0; }
 .admin-table-wrap { max-width: 100%; contain: inline-size paint; }
+.admin-order-details > div { min-width: 0; }
+.admin-detail-list { margin: 0; font-size: 12px; }
+.admin-detail-list > div { display: flex; justify-content: space-between; gap: 20px; padding: 9px 0; }
+.admin-detail-list dt { color: var(--muted); }
+.admin-detail-list dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
+.admin-detail-list a:hover { text-decoration: underline; }
+.admin-detail-list .admin-total { border-top: 1px solid var(--line); margin-top: 10px; padding-top: 18px; font-weight: 600; }
+.admin-total dt { color: var(--ink); }
+.admin-item-heading { display: flex; justify-content: space-between; gap: 16px; font-size: 13px; margin-bottom: 16px; }
+.admin-item-heading small { display: block; margin-top: 6px; color: var(--muted); font-size: 11px; }
+.admin-order-item + .admin-order-item { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line); }
+.admin-status-form label { display: block; margin-bottom: 8px; font-size: 12px; }
+.admin-status-form .btn { width: 100%; margin-top: 16px; }
+.admin-address { font-style: normal; font-size: 12px; line-height: 1.8; overflow-wrap: anywhere; }
+.admin-address span { display: block; }
+.admin-order-note { font-size: 12px; margin-bottom: 0; }

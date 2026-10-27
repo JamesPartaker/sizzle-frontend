@@ -57,7 +57,7 @@ sizzle/
 
 ## Administrator workspace
 
-Run `pnpm dev:admin` and open http://127.0.0.1:4174. Routes: `/templates`, `/designs`, `/users`, `/orders`. The app reuses the restaurant typography, colours, navigation, headings, footer and accessible dialogs, with compact table rows. `pnpm build` and `pnpm typecheck` include both apps; `pnpm preview:admin` previews the admin build.
+Run `pnpm dev:admin` and open http://127.0.0.1:4174. Routes: `/templates`, `/designs`, `/users`, `/orders`, `/orders/:id`. Order details include items and print specifications, customer contact, shipping and billing addresses, payment, delivery/tracking, notes, totals, and an inline status form. The detail repository method requests only the selected order; all details are illustrative demo data. The app reuses the restaurant typography, colours, navigation, headings, footer and accessible dialogs, with compact table rows. `pnpm build` and `pnpm typecheck` include both apps; `pnpm preview:admin` previews the admin build.
 
 The administrator uses an in-memory demo repository and makes no API calls. User detail and order status edits last until reload. It does not implement authentication or authorization; production access must be enforced by the server.
 

@@ -15,7 +15,7 @@ for (const kind of ["templates", "designs", "users", "orders"]) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth && innerWidth === document.documentElement.clientWidth)).toBe(true);
   });
 }
-test("edits users and updates order status with accessible dialogs", async ({ page }) => {
+test("edits users and manages an order on its details page", async ({ page }) => {
   await page.goto("/users", { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Edit user USE-1000", exact: true }).click();
   await page.getByLabel("Full name").fill("Updated Person");
@@ -24,10 +24,22 @@ test("edits users and updates order status with accessible dialogs", async ({ pa
   await expect(page.getByRole("dialog")).not.toBeVisible();
   await expect(page.locator("tbody tr").first()).toContainText("Updated Person");
   await page.goto("/orders", { waitUntil: "domcontentloaded" });
-  await page.getByRole("button", { name: "Update status for ORD-1000", exact: true }).click();
-  await page.getByLabel("Order status", { exact: true }).selectOption("Shipped");
-  await page.getByRole("button", { name: "Save changes" }).click();
+  await page.getByRole("link", { name: "View order ORD-1000", exact: true }).click();
+  await expect(page).toHaveURL(/\/orders\/ORD-1000$/);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  for (const section of ["Order items", "Customer details", "Delivery & tracking", "Order notes", "Order summary", "Payment details", "Shipping address", "Billing address"]) {
+    await expect(page.getByRole("heading", { name: section, exact: true })).toBeVisible();
+  }
+  await page.getByLabel("Update status", { exact: true }).selectOption("Shipped");
+  await page.getByRole("button", { name: "Save status" }).click();
+  await expect(page.getByRole("status")).toContainText("Order status updated");
+  await expect(page.getByText("SIZ100000", { exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "Back to all orders" }).click();
   await expect(page.locator("tbody tr").first()).toContainText("Shipped");
+  await page.goto("/orders/ORD-1000", { waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("heading", { name: "Order #ORD-1000" })).toBeVisible();
+  await page.goto("/orders/ORD-9999", { waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("heading", { name: "Order not found." })).toBeVisible();
 });
 
 test("jumps to numbered pages and centers the pagination", async ({ page }) => {
