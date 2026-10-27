@@ -20,7 +20,7 @@ watch(() => route.fullPath, () => { mobileOpen.value = false; });
     <div class="workspace"><div class="restaurant-avatar">S</div><div><strong>Sizzle Studio</strong><small>Administrator workspace</small></div></div>
     <div class="nav-label">ADMINISTRATION</div>
     <nav class="nav" aria-label="Administration"><RouterLink v-for="item in navs" :key="item.id" :to="`/${item.id}`" :class="{ active: route.name === item.id }" :aria-current="route.name === item.id ? 'page' : undefined" :aria-label="item.label"><AppIcon :name="item.icon" /><span class="nav-text">{{ item.label }}</span></RouterLink></nav>
-    <div class="sidebar-bottom"><div class="help-card"><strong>The bigger picture.</strong><p>Everything that keeps the<br />creative kitchen running.</p></div><div class="profile"><div class="avatar">SA</div><div><strong>Sizzle administrator</strong><small>Demo session</small></div></div></div>
+    <div class="sidebar-bottom"><div class="profile"><div class="avatar">SA</div><div><strong>Sizzle administrator</strong><small>Demo session</small></div></div></div>
   </aside>
   <div class="main"><header class="topbar"><button class="menu-toggle" aria-label="Open navigation" :aria-expanded="mobileOpen" @click="mobileOpen = !mobileOpen"><AppIcon name="menu" /></button><img class="mobile-logo" src="/assets/sizzle-logo.svg" alt="Sizzle" /><div class="crumb">Administration <span>/ &nbsp; {{ navs.find(n => n.id === route.name)?.label || 'Page not found' }}</span></div><div class="top-right"><span class="demo">Demo workspace</span><div class="avatar">SA</div></div></header><main id="content" class="content"><RouterView :key="String(route.name)" /></main></div>
 </template>
