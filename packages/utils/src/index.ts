@@ -21,17 +21,22 @@ export function assetData(file: File): Promise<string> {
     reader.readAsDataURL(file);
   });
 }
+export function assetContentType(file: Pick<File, "name">): string | undefined {
+  const types: Record<string, string> = {
+    png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
+    gif: "image/gif", ttf: "font/ttf", otf: "font/otf",
+  };
+  const extension = file.name.match(/\.([^.]+)$/)?.[1].toLowerCase() || "";
+  return Object.hasOwn(types, extension) ? types[extension] : undefined;
+}
 export function validateUpload(
-  file: Pick<File, "type" | "size">,
+  file: Pick<File, "name" | "size">,
 ): string | undefined {
-  if (
-    !["image/png", "image/jpeg", "image/webp", "image/svg+xml"].includes(
-      file.type,
-    )
-  )
-    return "Please choose SVG, PNG, JPG or WebP images.";
-  if (file.size > 5 * 1024 * 1024)
-    return "Please choose files smaller than 5 MB.";
+  if (!assetContentType(file))
+    return "Please choose PNG, JPG, GIF, TTF or OTF files.";
+  if (file.size <= 0) return "Please choose a file that isn't empty.";
+  if (file.size > 20 * 1024 * 1024)
+    return "Please choose files no larger than 20 MB.";
 }
 export const previewColors: Record<string, string> = {
   sunday: "#ffe1d2",

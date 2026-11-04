@@ -32,15 +32,30 @@ Supported current endpoints:
 | Delete asset            | `DELETE /api/v1/assets/:id`         |
 | Storage usage           | `GET /api/v1/assets/storage`        |
 
-For private uploads, call `beginUpload`, upload binary bytes to the returned signed URL with its headers, then call `completeUpload`. Signed URLs are short lived; do not persist them as permanent asset URLs. The current Go server accepts different upload formats than the prototype (including font files, excluding SVG/WebP), so align the UI's accepted formats when connecting it.
+The restaurant asset page is connected to these Go endpoints through `createPrivateAssetService`. To enable it, add these settings to `apps/restaurant/.env.local` and restart Vite:
 
-The current Go server does not expose the template listing, print orders, duplicate, or undo/restore endpoints used by this prototype. Its design DTOs also do not directly contain the template preview metadata shown here. Those need an explicit mapping and backend implementation. No Go source is changed in this export, and the restaurant UI is deliberately not silently wired to incompatible endpoints.
+```dotenv
+VITE_DATA_SOURCE=demo
+VITE_ASSET_SOURCE=api
+VITE_API_BASE_URL=http://localhost:8080
+VITE_AUTH_SOURCE=api
+```
+
+This connects assets and login to Go while retaining the other workspace prototypes. `VITE_ASSET_API_BASE_URL` optionally overrides the Go origin for assets. If `VITE_ASSET_SOURCE` is blank, it follows `VITE_DATA_SOURCE`; setting it explicitly to `demo` uses browser-local assets.
+
+Uploads reserve metadata with `POST /api/v1/assets`, PUT the raw File to the signed storage URL, then call `/complete`. The browser sets Host and Content-Length; other returned signed headers are preserved. API requests include session cookies; storage uploads omit credentials. Failed PUT/completion attempts make a best-effort DELETE to release the pending storage reservation. Quota, authentication, and verification failures appear in the upload notification.
+
+The page accepts PNG, JPEG, GIF, TTF, and OTF files, up to 20 MiB each. MIME types are derived from the supported file extension, including fonts whose browser MIME type is empty or varies; the Go server verifies actual content. SVG and WebP are rejected. Listing shows ready assets only and maps server metadata to image/font cards. Pending uploads are excluded. Image previews request signed download URLs, refresh every four minutes while the page is active, and refetch on focus/remount. Signed URLs stay in memory and are never stored in localStorage. Font cards display metadata without requesting image previews.
+
+The Go server and private bucket must be configured as described in `sizzle-go-api/docs/private-assets.md`. The API needs credentialed CORS for the frontend origin and the bucket needs CORS for signed PUT requests. Run `VITE_ASSET_SOURCE=api pnpm test:e2e tests/e2e/assets-api.spec.ts` for mocked desktop/mobile upload, preview, reload, and quota checks.
+
+The current Go server does not expose the template listing, print orders, duplicate, or undo/restore endpoints used by this prototype. Its design DTOs also do not directly contain the template preview metadata shown here. Those need an explicit mapping and backend implementation. Assets use the Go integration above; the other workspace resources still require those adapters.
 
 ## UI data service
 
-The frontend consumes `SizzleClient`, a typed interface with designs/templates/assets/orders. `createDemoClient` implements it with browser storage. Existing prototype localStorage keys are retained for migration: `sizzle-docs` and `sizzle-assets`. Uploaded images remain in the current browser only.
+The frontend consumes `SizzleClient`, a typed interface with designs/templates/assets/orders. `createDemoClient` implements it with browser storage. Existing prototype localStorage keys are retained for migration: `sizzle-docs` and `sizzle-assets`. In demo mode, uploaded image data remains in the current browser only. Live assets use the Go service independently.
 
-`createHttpClient` is an optional frontend-facing REST contract, not the existing Go adapter. `VITE_DATA_SOURCE=api` selects this contract. Its base URL must point at a service/adapter that implements the following shape:
+`createHttpClient` is an optional frontend-facing REST contract, not the existing Go adapter. `VITE_DATA_SOURCE=api` selects this contract for designs, templates, and orders; assets use the Go service. Its base URL must point at a service/adapter that implements the following shape:
 
 | Method | Relative URL             | Body / result                           |
 | ------ | ------------------------ | --------------------------------------- |
@@ -51,11 +66,9 @@ The frontend consumes `SizzleClient`, a typed interface with designs/templates/a
 | DELETE | `/designs/:id`           | → 204                                   |
 | POST   | `/designs/:id/restore`   | deleted `Design` → `Design`             |
 | GET    | `/templates`             | `Template[]`                            |
-| GET    | `/assets`                | `BrandAsset[]`                          |
-| POST   | `/assets`                | `NewAsset` with data URL → `BrandAsset` |
 | GET    | `/orders`                | `PrintOrder[]`                          |
 
-The Zod definitions in `packages/schemas` are the source of truth for these frontend models. For a production adapter, replace data URL upload requests with the Go signed-upload flow and map its private asset DTOs into the view model. Use server-owned prices, order state, and delivery details; demo calculations are presentation examples.
+The Zod definitions in `packages/schemas` are the source of truth for these frontend models. The standalone `createHttpClient` retains its legacy `/assets` contract for external adapters, but the restaurant app routes asset operations through its separate asset service. Use server-owned prices, order state, and delivery details; demo calculations are presentation examples.
 
 ## Authentication and routing
 

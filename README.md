@@ -90,6 +90,8 @@ TypeScript is pinned to 5.9.x because the installed Vue type checker is incompat
 
 Copy `apps/restaurant/.env.example` to `.env.local` to configure local settings. See [integration notes](docs/integration.md) before selecting API mode.
 
+Set `VITE_ASSET_SOURCE=api` and `VITE_API_BASE_URL` to connect asset uploads and listing to `sizzle-go-api`. Enable `VITE_AUTH_SOURCE=api` to sign in with its cookie session. Assets support signed binary uploads, private image previews, and PNG/JPEG/GIF/TTF/OTF files up to 20 MiB. Other workspace data can remain in demo mode with `VITE_DATA_SOURCE=demo`.
+
 The workspace remains a UI prototype; `/login` and `/register` can use the existing Go authentication endpoints when `VITE_AUTH_SOURCE=api` is configured (see [integration settings](docs/integration.md#authentication-and-routing)). The app does not take payments or place orders. Production access must be enforced by the server. The session shown by Pinia is demo presentation state, not an authorization mechanism.
 
 Set `VITE_EDITOR_URL` to the separately deployed editor when ready. “Open in editor” then navigates there with `?documentId=<id>`. Without it, the approved read-only preview modal is shown. There are no menu-heading customization fields in that modal.

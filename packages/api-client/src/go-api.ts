@@ -28,7 +28,7 @@ export const goAssetSchema = z.object({
 });
 const signedUrlSchema = z.object({
   url: z.string().url(),
-  headers: z.record(z.string(), z.string()),
+  headers: z.record(z.string(), z.string()).nullable().transform((value) => value || {}),
   expires_in: z.number(),
 });
 export type GoDesign = z.infer<typeof goDesignSchema>;

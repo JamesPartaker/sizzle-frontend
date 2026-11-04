@@ -2,7 +2,7 @@
 import { computed, ref } from "vue";
 import { useDropZone } from "@vueuse/core";
 import { AppIcon } from "@sizzle/ui";
-import { assetData, validateUpload } from "@sizzle/utils";
+import { validateUpload } from "@sizzle/utils";
 import { useWorkspaceData } from "../composables/useWorkspaceData";
 import { useWorkspaceStore } from "../stores/workspace";
 import PageHeading from "../components/PageHeading.vue";
@@ -14,6 +14,7 @@ const search = ref(""),
   type = ref("All assets");
 const input = ref<HTMLInputElement>(),
   dropZone = ref<HTMLElement>();
+const uploading = ref(false);
 const { isOverDropZone } = useDropZone(dropZone, {
   onDrop: (files) => {
     if (files) void addFiles(files);
@@ -27,6 +28,8 @@ const filtered = computed(() =>
   ),
 );
 async function addFiles(files: File[] | FileList) {
+  if (uploading.value) return;
+  uploading.value = true;
   let count = 0;
   for (const file of Array.from(files)) {
     const error = validateUpload(file);
@@ -35,15 +38,10 @@ async function addFiles(files: File[] | FileList) {
       continue;
     }
     try {
-      await upload.mutateAsync({
-        name: file.name,
-        type: "Images",
-        size: `${file.name.split(".").pop()?.toUpperCase()} · ${Math.ceil(file.size / 1024)} KB`,
-        data: await assetData(file),
-      });
+      await upload.mutateAsync(file);
       count++;
     } catch {
-      return;
+      break;
     }
   }
   if (count)
@@ -51,6 +49,7 @@ async function addFiles(files: File[] | FileList) {
       `${count} ${count === 1 ? "asset" : "assets"} added to your creative kitchen.`,
     );
   if (input.value) input.value.value = "";
+  uploading.value = false;
 }
 function choose(event: Event) {
   const files = (event.target as HTMLInputElement).files;
@@ -61,10 +60,10 @@ function choose(event: Event) {
   <PageHeading
     eyebrow="YOUR BRAND, AT HAND"
     title="All the little details."
-    description="Your logos, illustrations, and images. Ready for their next menu."
+    description="Your logos, images, and fonts. Ready for their next menu."
     ><button
       class="btn primary"
-      :disabled="upload.isPending.value"
+      :disabled="uploading"
       @click="input?.click()"
     >
       <AppIcon name="upload" />Upload assets
@@ -74,7 +73,7 @@ function choose(event: Event) {
     ref="input"
     type="file"
     hidden
-    accept="image/png,image/jpeg,image/webp,image/svg+xml"
+    accept=".png,.jpg,.jpeg,.gif,.ttf,.otf"
     multiple
     @change="choose"
   />
@@ -83,15 +82,16 @@ function choose(event: Event) {
     :class="['upload-zone', { dragging: isOverDropZone }]"
     tabindex="0"
     role="button"
-    aria-label="Upload images"
+    aria-label="Upload assets"
+    :aria-disabled="uploading"
     @click="input?.click()"
     @keydown.enter="input?.click()"
     @keydown.space.prevent="input?.click()"
   >
     <AppIcon name="upload" /><strong>Drop something good here.</strong>
     <p>
-      Drag & drop or <u>browse files</u> &nbsp; · &nbsp; SVG, PNG, JPG, WebP
-      &nbsp; · &nbsp; Up to 5 MB each
+      Drag & drop or <u>browse files</u> &nbsp; · &nbsp; PNG, JPG, GIF, TTF, OTF
+      &nbsp; · &nbsp; Up to 20 MB each
     </p>
   </div>
   <div class="toolbar">
@@ -110,6 +110,7 @@ function choose(event: Event) {
         'Logos',
         'Illustrations',
         'Images',
+        'Fonts',
         'Brand colours',
       ]"
       :key="t"
@@ -132,6 +133,7 @@ function choose(event: Event) {
       <article v-for="asset in filtered" :key="asset.id" class="asset-card">
         <div class="asset-image">
           <img v-if="asset.data" :src="asset.data" :alt="asset.name" />
+          <AppIcon v-else-if="asset.type === 'Fonts'" name="file" />
           <div v-else-if="asset.id === 'logo'" class="asset-logo">
             Sunday<br />Table<br /><small>GOOD THINGS, MADE SLOWLY.</small>
           </div>
@@ -159,7 +161,7 @@ function choose(event: Event) {
         </div>
       </article>
       <div v-if="!filtered.length" class="empty">
-        No assets found. Try a different search or upload an image.
+        No assets found. Try a different search or upload a file.
       </div>
     </div></QueryState
   ><PageFooter />

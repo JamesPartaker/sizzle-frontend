@@ -12,14 +12,21 @@ describe("relative editing timestamps", () => {
 describe("asset upload limits", () => {
   it("accepts the documented exact size boundary and rejects unsupported types", () => {
     expect(
-      validateUpload({ type: "image/png", size: 5 * 1024 * 1024 }),
+      validateUpload({ name: "image.png", size: 20 * 1024 * 1024 }),
     ).toBeUndefined();
     expect(
-      validateUpload({ type: "image/png", size: 5 * 1024 * 1024 + 1 }),
-    ).toContain("5 MB");
-    expect(validateUpload({ type: "text/html", size: 1 })).toContain(
-      "SVG, PNG",
+      validateUpload({ name: "image.png", size: 20 * 1024 * 1024 + 1 }),
+    ).toContain("20 MB");
+    expect(validateUpload({ name: "page.html", size: 1 })).toContain(
+      "PNG, JPG",
     );
+  });
+  it("supports fonts with missing browser MIME types and rejects active formats and empty files", () => {
+    for (const name of ["logo.PNG", "photo.jpeg", "animation.gif", "font.ttf", "font.otf"])
+      expect(validateUpload({ name, size: 1 })).toBeUndefined();
+    for (const name of ["logo.svg", "photo.webp"])
+      expect(validateUpload({ name, size: 1 })).toBeDefined();
+    expect(validateUpload({ name: "empty.png", size: 0 })).toContain("empty");
   });
 });
 it("trims design names and enforces the editable limit", () => {

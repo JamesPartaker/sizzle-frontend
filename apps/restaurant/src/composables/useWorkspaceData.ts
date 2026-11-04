@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/vue-query";
-import { api } from "../api";
+import { api, assetApi, isLiveAssets } from "../api";
 import { useWorkspaceStore } from "../stores/workspace";
-import type { Design, NewDesign, NewAsset } from "@sizzle/schemas";
+import type { Design, NewDesign } from "@sizzle/schemas";
 export function useWorkspaceData() {
   const query = useQueryClient();
   const ui = useWorkspaceStore();
@@ -15,7 +15,11 @@ export function useWorkspaceData() {
   });
   const assets = useQuery({
     queryKey: ["assets"],
-    queryFn: () => api.assets.list(),
+    queryFn: () => assetApi.list(),
+    // Signed previews expire after five minutes; refresh while the page is open.
+    staleTime: isLiveAssets ? 0 : undefined,
+    gcTime: isLiveAssets ? 0 : undefined,
+    refetchInterval: isLiveAssets ? 4 * 60 * 1000 : false,
   });
   const orders = useQuery({
     queryKey: ["orders"],
@@ -55,7 +59,7 @@ export function useWorkspaceData() {
     onError,
   });
   const upload = useMutation({
-    mutationFn: (input: NewAsset) => api.assets.upload(input),
+    mutationFn: (file: File) => assetApi.upload(file),
     onSuccess: () => query.invalidateQueries({ queryKey: ["assets"] }),
     onError,
   });
