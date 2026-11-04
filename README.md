@@ -90,7 +90,7 @@ TypeScript is pinned to 5.9.x because the installed Vue type checker is incompat
 
 Copy `apps/restaurant/.env.example` to `.env.local` to configure local settings. See [integration notes](docs/integration.md) before selecting API mode.
 
-The exported app remains a UI prototype: it does not authenticate users, take payments, or place orders. Production access must be enforced by the server. The session shown by Pinia is demo presentation state, not an authorization mechanism.
+The workspace remains a UI prototype; `/login` and `/register` can use the existing Go authentication endpoints when `VITE_AUTH_SOURCE=api` is configured (see [integration settings](docs/integration.md#authentication-and-routing)). The app does not take payments or place orders. Production access must be enforced by the server. The session shown by Pinia is demo presentation state, not an authorization mechanism.
 
 Set `VITE_EDITOR_URL` to the separately deployed editor when ready. “Open in editor” then navigates there with `?documentId=<id>`. Without it, the approved read-only preview modal is shown. There are no menu-heading customization fields in that modal.
 

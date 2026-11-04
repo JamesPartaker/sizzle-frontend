@@ -4,6 +4,8 @@ export const router = createRouter({
   scrollBehavior: () => ({ top: 0 }),
   routes: [
     { path: "/", redirect: "/dashboard" },
+    { path: "/login", name: "login", component: () => import("./views/AuthView.vue"), meta: { title: "Sign in", authPage: true } },
+    { path: "/register", name: "register", component: () => import("./views/AuthView.vue"), meta: { title: "Create an account", authPage: true } },
     {
       path: "/dashboard",
       name: "dashboard",

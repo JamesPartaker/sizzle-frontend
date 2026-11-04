@@ -59,7 +59,15 @@ The Zod definitions in `packages/schemas` are the source of truth for these fron
 
 ## Authentication and routing
 
-The export does not add a login page or invented auth flow. HTTP clients send cookies; 401/403 errors are surfaced instead of being replaced by demo data. Add your existing Go session login flow and a Vue Router `beforeEach` session check when connecting production data. Route guards improve UX; server ownership checks remain authoritative. No admin routes or permissions are added.
+The restaurant app provides `/login` and `/register` outside the workspace layout. By default these pages explain demo mode and provide an explicit link to explore the demo workspace; submitting credentials does not create a fake session or store a password.
+
+Set `VITE_AUTH_SOURCE=api` to enable the Go server's cookie-based authentication. Set `VITE_AUTH_API_BASE_URL` to the Go server origin (falls back to `VITE_API_BASE_URL`, then the frontend origin). `createGoApiClient().auth.login` and `.auth.register` POST `{ emailAddress, password }` to `/login` and `/register`, accepting the server's empty 204 and 201 responses. Successful submission opens `/dashboard`; failures stay on the form. Google sign-in navigates to the Go server's `/login/google`. The Go OAuth callback currently redirects to `/` on the API origin; production routing must serve the frontend there or proxy these auth routes on the frontend origin. Separate origins also require the server's credentialed CORS and cookie configuration to allow the frontend.
+
+The auth setting is independent of `VITE_DATA_SOURCE`; enabling authentication does not replace the workspace data adapter. Full name and persistent “remember me” are omitted because the current Go endpoint does not support them. Password reset presents an availability notice because the backend has no reset endpoint. Terms and privacy dialogs are provisional launch copy.
+
+Workspace routes remain accessible for the existing demo; this change does not introduce authorization guards or claim that the Pinia demo profile is the authenticated user. Before production, connect the workspace profile to `/api/v1/me`, enforce session checks and server ownership checks, and replace demo data with the intended API adapter. No admin routes or permissions are changed.
+
+Run `pnpm test:e2e tests/e2e/auth.spec.ts` for demo-page checks and `VITE_AUTH_SOURCE=api pnpm test:e2e tests/e2e/auth-api.spec.ts` for mocked Go sign-in and registration checks. API-mode tests start an isolated server on port 4179 so they do not reuse a running demo server.
 
 ## Shared packages
 

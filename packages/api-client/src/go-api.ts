@@ -54,6 +54,7 @@ export function createGoApiClient(
     path: string,
     method = "GET",
     body?: unknown,
+    noContent = false,
   ): Promise<unknown> {
     const response = await fetcher(`${origin.replace(/\/$/, "")}${path}`, {
       method,
@@ -62,9 +63,18 @@ export function createGoApiClient(
       body: body ? JSON.stringify(body) : undefined,
     });
     if (!response.ok) throw new GoApiError(response.status);
-    return response.status === 204 ? undefined : response.json();
+    return noContent || response.status === 204 ? undefined : response.json();
   }
   return {
+    auth: {
+      login: async (emailAddress: string, password: string) => {
+        await request("/login", "POST", { emailAddress, password }, true);
+      },
+      register: async (emailAddress: string, password: string) => {
+        await request("/register", "POST", { emailAddress, password }, true);
+      },
+      googleUrl: `${origin.replace(/\/$/, "")}/login/google`,
+    },
     me: async () =>
       z
         .object({

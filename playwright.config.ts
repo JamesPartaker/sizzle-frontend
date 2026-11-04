@@ -1,8 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
+const port = process.env.VITE_AUTH_SOURCE === "api" ? 4179 : 4173;
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
-  use: { baseURL: "http://127.0.0.1:4173", trace: "retain-on-failure" },
+  use: { baseURL: `http://127.0.0.1:${port}`, trace: "retain-on-failure" },
   projects: [
     {
       name: "desktop",
@@ -17,8 +18,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "pnpm dev",
-    url: "http://127.0.0.1:4173",
-    reuseExistingServer: !process.env.CI,
+    command: `pnpm --filter @sizzle/restaurant dev --port ${port} --strictPort`,
+    url: `http://127.0.0.1:${port}`,
+    reuseExistingServer: !process.env.CI && process.env.VITE_AUTH_SOURCE !== "api",
   },
 });
