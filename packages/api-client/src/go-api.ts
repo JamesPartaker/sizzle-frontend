@@ -9,6 +9,7 @@ const documentSchema = z
   })
   .passthrough();
 export const goDesignSchema = z.object({
+  revision: z.number().int().nonnegative(),
   design_id: z.string(),
   workspace_id: z.string(),
   name: z.string(),
@@ -112,11 +113,14 @@ export function createGoApiClient(
         id: string,
         Document: Record<string, unknown>,
         DocumentVersion: number,
+        revision: number,
       ) => {
-        await request(
-          `/api/v1/designs/${encodeURIComponent(id)}/document`,
-          "POST",
-          { Document, DocumentVersion },
+        return z.object({ revision: z.number().int().nonnegative() }).parse(
+          await request(
+            `/api/v1/designs/${encodeURIComponent(id)}/document`,
+            "POST",
+            { Document, DocumentVersion, revision },
+          ),
         );
       },
     },

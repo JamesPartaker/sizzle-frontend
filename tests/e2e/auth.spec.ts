@@ -33,3 +33,24 @@ test("account routes switch outside the workspace shell and do not load workspac
   await page.getByRole("link", { name: "Explore the demo workspace" }).click();
   await expect(page.locator(".sidebar")).toBeAttached();
 });
+
+test("split account pages fit shorter desktop viewports", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "Desktop branding panel only.");
+  for (const height of [600, 768, 900]) {
+    await page.setViewportSize({ width: 1440, height });
+    for (const path of ["/login", "/register"]) {
+      await page.goto(path);
+      await page.evaluate(() => document.fonts.ready);
+      await expect(page.locator(".brand")).toBeVisible();
+      expect(await page.evaluate(() => ({ height: innerHeight, content: document.documentElement.scrollHeight })), `${path} at ${height}px`).toEqual({ height, content: height });
+      const artFits = await page.locator(".art").evaluate(el => {
+        const area = el.getBoundingClientRect();
+        return [...el.children].every(child => {
+          const r = child.getBoundingClientRect();
+          return r.top >= area.top && r.bottom <= area.bottom;
+        });
+      });
+      expect(artFits).toBe(true);
+    }
+  }
+});

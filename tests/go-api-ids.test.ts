@@ -7,8 +7,8 @@ it("accepts UUID workspace IDs in session and design responses", async () => {
   const client = createGoApiClient("https://example.test", async (url) =>
     Response.json(String(url).endsWith("/me")
       ? { EmailAddress: "owner@example.com", WorkspaceId: workspaceId, Role: "USER" }
-      : [{ design_id: designId, workspace_id: workspaceId, name: "Menu", description: "", updated_at: "2026-11-03T00:00:00Z", created_at: "2026-11-03T00:00:00Z" }]),
+      : [{ revision: 0, design_id: designId, workspace_id: workspaceId, name: "Menu", description: "", updated_at: "2026-11-03T00:00:00Z", created_at: "2026-11-03T00:00:00Z" }]),
   );
   expect((await client.me()).WorkspaceId).toBe(workspaceId);
-  expect((await client.designs.list())[0]).toMatchObject({ design_id: designId, workspace_id: workspaceId });
+  expect((await client.designs.list())[0]).toMatchObject({ revision: 0, design_id: designId, workspace_id: workspaceId });
 });

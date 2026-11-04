@@ -37,13 +37,14 @@ button:focus-visible,a:focus-visible,input:focus-visible {
 }
 .brand {
   position:relative;
-  min-height:calc(100svh - 32px);
+  height:calc(100svh - 32px);
+  min-height:0;
   overflow:hidden;
   border-radius:15px;
   background:#f2e6fb;
   display:flex;
   flex-direction:column;
-  padding:39px 43px 30px;
+  padding:clamp(20px, 4svh, 39px) 43px;
 }
 .logo {
   display:flex;
@@ -63,7 +64,7 @@ button:focus-visible,a:focus-visible,input:focus-visible {
   font-size:10px;
   font-weight:600;
   letter-spacing:2px;
-  margin-top:60px;
+  margin-top:clamp(16px, 5svh, 60px);
 }
 .eyebrow:before {
   content:'';
@@ -75,10 +76,10 @@ button:focus-visible,a:focus-visible,input:focus-visible {
 .brand h1 {
   font-family:var(--serif);
   font-weight:400;
-  font-size:clamp(42px,4.2vw,67px);
+  font-size:clamp(30px, min(4.2vw, 6svh), 67px);
   letter-spacing:-1px;
   line-height:1.12;
-  margin:20px 0 16px;
+  margin:clamp(10px, 2svh, 20px) 0 clamp(8px, 1.6svh, 16px);
   position:relative;
   z-index:1;
 }
@@ -96,18 +97,21 @@ button:focus-visible,a:focus-visible,input:focus-visible {
 .art {
   position:relative;
   flex:1;
-  min-height:340px;
+  min-height:0;
   display:flex;
   justify-content:center;
   align-items:center;
-  margin:30px 0;
+  margin:clamp(10px, 2svh, 30px) 0;
+  container-type:size;
 }
 .art :deep(.mini-menu) {
-  width:210px;
-  min-width:210px;
-  height:296px;
-  padding:24px 20px;
-  font-size:9px;
+  height:min(80cqh, 296px);
+  width:auto;
+  min-width:0;
+  aspect-ratio:210 / 296;
+  flex-shrink:0;
+  padding:clamp(8px, 6cqh, 24px) clamp(7px, 5cqh, 20px);
+  font-size:clamp(4px, 2.4cqh, 9px);
   box-shadow:0 12px 28px #53402e22;
   transform:rotate(-12deg);
 }
@@ -412,16 +416,10 @@ dialog button {
 }
 @media(min-width:1500px) {
   .brand {
-    padding:50px 65px;
+    padding:clamp(20px, 4svh, 50px) 65px;
   }
   .eyebrow {
-    margin-top:90px;
-  }
-  .art {
-    min-height:340px;
-  }
-  .art svg {
-    max-height:440px;
+    margin-top:clamp(16px, 6svh, 90px);
   }
   .form-wrap {
     max-width:390px;
@@ -522,4 +520,26 @@ dialog button {
   .register .form-wrap {
     padding:28px 0 35px;
   }
+}
+
+@media (min-width:1025px) and (max-height:800px) {
+  .form-side { padding-top:16px; padding-bottom:10px; }
+  .form-wrap, .register .form-wrap { padding:18px 0; }
+  .intro, .register .intro { margin-bottom:18px; }
+  .divider, .register .divider { margin:16px 0; }
+  .field, .register .field { margin-bottom:14px; }
+  .options { margin-bottom:18px; }
+  .switch-copy { margin-top:16px; }
+}
+@media (min-width:1025px) and (max-height:650px) {
+  .form-wrap, .register .form-wrap { max-width:440px; padding:6px 0; }
+  .form-wrap h2 { font-size:30px; }
+  .intro, .register .intro { font-size:12px; margin-bottom:12px; }
+  .divider, .register .divider { margin:12px 0; }
+  .field, .register .field { margin-bottom:10px; }
+  .field label { margin-bottom:6px; }
+  .field input:not([type=checkbox]), .social, .submit { height:42px; }
+  .options { margin-bottom:14px; }
+  .switch-copy { margin-top:12px; }
+  .terms { margin-top:12px; }
 }

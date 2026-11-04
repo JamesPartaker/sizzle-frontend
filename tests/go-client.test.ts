@@ -49,3 +49,14 @@ it("handles Go list responses with a null assets array", async () => {
   );
   expect(await client.assets.list()).toEqual([]);
 });
+it("sends the loaded revision and returns the new revision", async () => {
+  const client = createGoApiClient("https://api.test", async (_url, init) => {
+    expect(JSON.parse(init!.body as string)).toEqual({ Document: { title: "Menu" }, DocumentVersion: 1, revision: 12 });
+    return Response.json({ revision: 13 });
+  });
+  expect(await client.designs.saveDocument("design", { title: "Menu" }, 1, 12)).toEqual({ revision: 13 });
+});
+it("surfaces a stale document as a 409 error", async () => {
+  const client = createGoApiClient("https://api.test", async () => Response.json({ code: "revision_conflict" }, { status: 409 }));
+  await expect(client.designs.saveDocument("design", {}, 1, 12)).rejects.toMatchObject({ status: 409 });
+});

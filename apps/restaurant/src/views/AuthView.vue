@@ -115,6 +115,5 @@ function google() {
 .auth-page .submit-label { font-size:12px; }
 .auth-page button:disabled { opacity:.6; cursor:wait; }
 .auth-page .auth-error { background:#fbe9e2; color:#923b27; }
-.auth-page .brand { padding-bottom:30px; }
 .auth-page .brand h1 { color:#722345; }
 </style>
