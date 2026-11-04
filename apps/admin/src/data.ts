@@ -9,6 +9,25 @@ export interface AdminRecord {
   id: string; name: string; email: string; restaurant: string;
   status: string; updatedAt: string; type: string; quantity: number; total: number;
 }
+export interface UserDetails {
+  id: string; name: string; email: string; restaurant: string; status: string;
+  createdAt: string; updatedAt: string; lastSignInAt: string | null; role: string;
+}
+export interface TemplateDetails {
+  id: string; name: string; status: string; type: string;
+  description: string; style: string; palette: string; tags: string[];
+  createdAt: string; updatedAt: string; author: string; version: number;
+  pages: number; widthMm: number; heightMm: number; orientation: string;
+  bleedMm: number; fonts: string[]; usageCount: number;
+}
+export interface DesignDetails {
+  id: string; name: string; status: string; type: string;
+  description: string; createdAt: string; updatedAt: string; version: number;
+  pages: number; widthMm: number; heightMm: number; orientation: string;
+  owner: { id: string; name: string; email: string; restaurant: string };
+  template: { id: string; name: string };
+  documentId: string;
+}
 export interface OrderDetails extends AdminRecord {
   customerName: string;
   phone: string;
@@ -32,6 +51,9 @@ export interface SearchPage { items: AdminRecord[]; totalItems: number }
 export interface AdminRepository {
   search(kind: Kind, request: SearchRequest, signal: AbortSignal): Promise<SearchPage>;
   updateUser(id: string, details: Pick<AdminRecord, "name" | "email" | "restaurant" | "status">): Promise<void>;
+  getUser(id: string, signal: AbortSignal): Promise<UserDetails | null>;
+  getTemplate(id: string, signal: AbortSignal): Promise<TemplateDetails | null>;
+  getDesign(id: string, signal: AbortSignal): Promise<DesignDetails | null>;
   getOrder(id: string, signal: AbortSignal): Promise<OrderDetails | null>;
   updateOrderStatus(id: string, status: string): Promise<void>;
 }
@@ -58,6 +80,23 @@ function abortableDelay(signal: AbortSignal) {
     signal.addEventListener("abort", abort, { once: true });
   });
 }
+function detailIndex(id: string, prefix: string): number | null {
+  if (!new RegExp(`^${prefix}-\\d{4}$`).test(id)) return null;
+  const index = Number(id.slice(4)) - 1000;
+  return index >= 0 && index < 137 ? index : null;
+}
+function templateDetails(index: number): TemplateDetails {
+  const row = record("templates", index);
+  return {
+    id: row.id, name: row.name, status: row.status, type: row.type,
+    description: "A considered layout for seasonal dishes, signature drinks and restaurant favourites. Editable text, colours and imagery make it easy to adapt to a restaurant’s identity.",
+    style: index % 2 ? "Modern café" : "Elegant dining", palette: index % 2 ? "Cool" : "Warm",
+    tags: ["Seasonal", "Restaurant", index % 2 ? "Drinks" : "Food"],
+    createdAt: "2026-09-01T14:00:00.000Z", updatedAt: row.updatedAt,
+    author: "Sizzle Studio", version: 3, pages: 2, widthMm: 210, heightMm: 297,
+    orientation: "Portrait", bleedMm: 3, fonts: ["DM Sans", "DM Serif Display"], usageCount: 120 + index,
+  };
+}
 /** Demo only: returns a single bounded page and count metadata.
  * Replace with server-side filtering/sorting/pagination; never fetch all records.
  * The server should index filters/sorts (with an ID tie-breaker), enforce limit <= 100,
@@ -82,6 +121,37 @@ export const adminRepository: AdminRepository = {
       totalItems++;
     }
     return { items, totalItems };
+  },
+  async getUser(id, signal) {
+    await abortableDelay(signal);
+    const index = detailIndex(id, "USE");
+    if (index === null) return null;
+    const row = record("users", index);
+    return {
+      id: row.id, name: row.name, email: row.email, restaurant: row.restaurant, status: row.status,
+      createdAt: "2026-09-01T14:00:00.000Z", updatedAt: row.updatedAt,
+      lastSignInAt: row.status === "Invited" ? null : row.updatedAt, role: "Restaurant owner",
+    };
+  },
+  async getTemplate(id, signal) {
+    await abortableDelay(signal);
+    const index = detailIndex(id, "TEM");
+    return index === null ? null : templateDetails(index);
+  },
+  async getDesign(id, signal) {
+    await abortableDelay(signal);
+    const index = detailIndex(id, "DES");
+    if (index === null) return null;
+    const row = record("designs", index);
+    const template = templateDetails(index);
+    return {
+      id: row.id, name: row.name, status: row.status, type: row.type,
+      description: "A restaurant’s customised menu, based on a Sizzle template with its own dishes, prices and brand details.",
+      createdAt: "2026-10-01T14:00:00.000Z", updatedAt: row.updatedAt, version: 5,
+      pages: 2, widthMm: 210, heightMm: 297, orientation: "Portrait",
+      owner: { id: `USE-${1000 + index}`, name: names[index % 6], email: row.email, restaurant: row.restaurant },
+      template: { id: template.id, name: template.name }, documentId: row.id,
+    };
   },
   async getOrder(id, signal) {
     await abortableDelay(signal);

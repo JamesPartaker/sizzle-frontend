@@ -51,3 +51,14 @@ html, body { overflow-x: hidden; }
 .admin-address { font-style: normal; font-size: 12px; line-height: 1.8; overflow-wrap: anywhere; }
 .admin-address span { display: block; }
 .admin-order-note { font-size: 12px; margin-bottom: 0; }
+.admin-record-details > div { min-width: 0; }
+.admin-description { font-size: 12px; margin: 0 0 16px; }
+.admin-detail-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.admin-detail-tags .chip { font-size: 11px; }
+.admin-editor-link { width: 100%; white-space: normal; }
+.admin-editor-link + .admin-description { margin-top: 12px; margin-bottom: 0; }
+.admin-related-link { margin-top: 16px; }
+.admin-user-edit { align-self: start; }
+.admin-user-edit fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.admin-user-edit label { display: block; margin: 18px 0 8px; font-size: 12px; }
+.admin-user-edit label:first-child { margin-top: 0; }

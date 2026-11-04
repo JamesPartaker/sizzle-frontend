@@ -57,3 +57,40 @@ it("loads a single complete order and handles unknown order IDs", async () => {
   await expect(adminRepository.getOrder("ORD-9999", signal)).resolves.toBeNull();
   await expect(adminRepository.getOrder("invalid", signal)).resolves.toBeNull();
 });
+it("loads individual template/design metadata with a consistent source template", async () => {
+  const signal = new AbortController().signal;
+  const template = await adminRepository.getTemplate("TEM-1000", signal);
+  const design = await adminRepository.getDesign("DES-1000", signal);
+  expect(template?.id).toBe("TEM-1000");
+  expect(template?.pages).toBe(2);
+  expect(template?.fonts).toContain("DM Sans");
+  expect(design?.template).toEqual({ id: template?.id, name: template?.name });
+  expect(design?.owner.email).toBe("studio1@example.com");
+  expect(design?.documentId).toBe("DES-1000");
+  await expect(adminRepository.getTemplate("TEM-9999", signal)).resolves.toBeNull();
+  await expect(adminRepository.getDesign("bad-id", signal)).resolves.toBeNull();
+  const controller = new AbortController();
+  controller.abort();
+  await expect(adminRepository.getDesign("DES-1000", controller.signal)).rejects.toMatchObject({ name: "AbortError" });
+});
+import { designEditorUrl } from "../apps/admin/src/editor";
+it("builds a safe editor handoff with the selected document ID", () => {
+  const result = designEditorUrl("https://editor.example.com/studio?workspace=admin&documentId=old", "design / 123", "https://admin.example.com");
+  const url = new URL(result!);
+  expect(url.searchParams.get("documentId")).toBe("design / 123");
+  expect(url.searchParams.get("workspace")).toBe("admin");
+  expect(designEditorUrl("/editor", "DES-1000", "https://admin.example.com")).toBe("https://admin.example.com/editor?documentId=DES-1000");
+  expect(designEditorUrl(undefined, "id", "https://admin.example.com")).toBeNull();
+  expect(designEditorUrl("javascript:alert(1)", "id", "https://admin.example.com")).toBeNull();
+});
+
+it("loads just the selected user and reflects detail updates", async () => {
+  const signal = new AbortController().signal;
+  const user = await adminRepository.getUser("USE-1002", signal);
+  expect(user?.id).toBe("USE-1002");
+  await adminRepository.updateUser("USE-1002", { name: "User revised", email: "revised@example.com", restaurant: "Revised restaurant", status: "Active" });
+  const revised = await adminRepository.getUser("USE-1002", signal);
+  expect(revised).toMatchObject({ name: "User revised", email: "revised@example.com", restaurant: "Revised restaurant", status: "Active" });
+  await expect(adminRepository.getUser("USE-9999", signal)).resolves.toBeNull();
+  await expect(adminRepository.getUser("invalid", signal)).resolves.toBeNull();
+});

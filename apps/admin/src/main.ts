@@ -14,6 +14,9 @@ const router = createRouter({
     ...["templates", "designs", "users", "orders"].map((kind) => ({
       path: `/${kind}`, name: kind, component: SearchView, props: { kind },
     })),
+    { path: "/users/:id", name: "user-details", component: () => import("./UserDetailsView.vue") },
+    { path: "/templates/:id", name: "template-details", component: () => import("./TemplateDetailsView.vue") },
+    { path: "/designs/:id", name: "design-details", component: () => import("./DesignDetailsView.vue") },
     { path: "/orders/:id", name: "order-details", component: () => import("./OrderDetailsView.vue") },
     { path: "/:pathMatch(.*)*", component: () => import("./NotFound.vue") },
   ],
