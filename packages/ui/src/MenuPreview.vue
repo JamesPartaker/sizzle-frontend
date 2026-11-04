@@ -5,7 +5,9 @@ const props = defineProps<{ template: Template; title?: string }>();
 const heading = computed(() => props.title || props.template.title.split("<br>").join("\n"));
 </script>
 <template>
+  <img v-if="template.thumbnailUrl" class="document-thumbnail" :src="template.thumbnailUrl" :alt="`${template.name} preview`" loading="lazy" />
   <div
+    v-else
     :class="['mini-menu', template.id]"
     :aria-label="`${template.name} menu preview`"
   >
@@ -23,3 +25,4 @@ const heading = computed(() => props.title || props.template.title.split("<br>")
     <div class="menu-footer">{{ template.footer }}</div>
   </div>
 </template>
+<style scoped>.document-thumbnail{display:block;width:100%;height:100%;object-fit:contain}</style>

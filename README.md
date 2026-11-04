@@ -97,3 +97,12 @@ The workspace remains a UI prototype; `/login` and `/register` can use the exist
 Set `VITE_EDITOR_URL` to the separately deployed editor when ready. “Open in editor” then navigates there with `?documentId=<id>`. Without it, the approved read-only preview modal is shown. There are no menu-heading customization fields in that modal.
 
 Google Fonts are loaded as in the original design (DM Sans and DM Serif Display). Self-host them later if your deployment requires offline fonts or a restrictive content security policy.
+
+
+## Shared documents and live editor handoff
+
+`packages/document` is the canonical `sizzle.document` v1 schema, validator, deterministic font compiler, resource library and SVG renderer; see its README for the complete contract and LLM editing rules. Run `node scripts/sync-document.mjs` after changing it and commit the generated copies in the editor/API repositories together. Fonts and images are immutable by hash; add filenames instead of replacing library bytes.
+
+With `VITE_DATA_SOURCE=api`, the restaurant workspace now uses the Go `/api/v1/designs` and `/api/v1/templates` contracts. Template selection creates an independent design snapshot on the server. Lists display revision-specific authenticated thumbnails. `VITE_EDITOR_URL` passes `documentId` from designs and `templateId` from admin templates. Configure credentialed API CORS and sign in before opening another origin. API PDF/thumbnail rendering requires the Node/Chromium worker documented in `sizzle-go-api/renderer/README.md`.
+
+Browser demo mode remains available when `VITE_DATA_SOURCE` is not `api`. Its illustrative template previews are separate from real revision thumbnails. Existing order-service integration is unchanged.

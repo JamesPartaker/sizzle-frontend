@@ -1,0 +1,35 @@
+{
+  "name": "@sizzle/document",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "module": "./src/index.mjs",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.mjs"
+    },
+    "./compiler": {
+      "types": "./src/compiler.d.ts",
+      "default": "./src/compiler.mjs"
+    },
+    "./assets/*": "./assets/*",
+    "./document.schema.json": "./document.schema.json"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "build": "node --test test/*.test.mjs",
+    "typecheck": "node --check src/index.mjs && node --check src/compiler.mjs"
+  },
+  "dependencies": {
+    "@noble/hashes": "1.8.0",
+    "ajv": "8.17.1",
+    "bidi-js": "1.0.3",
+    "buffer": "6.0.3",
+    "fontkit": "2.0.4",
+    "graphemer": "1.4.0",
+    "linebreak": "1.1.0",
+    "svgpath": "2.6.0"
+  }
+}

@@ -1,11 +1,11 @@
-import { createDemoClient, createHttpClient } from "@sizzle/api-client";
+import { createDemoClient, createGoWorkspaceClient } from "@sizzle/api-client";
 import { assetContentType, assetData } from "@sizzle/utils";
 import { createPrivateAssetService, type AssetService } from "./services/assets";
 export const isDemo = import.meta.env.VITE_DATA_SOURCE !== "api";
 const demoApi = createDemoClient(window.localStorage);
 export const api = isDemo
   ? demoApi
-  : createHttpClient(
+  : createGoWorkspaceClient(
       import.meta.env.VITE_API_BASE_URL || "http://localhost:8080",
     );
 

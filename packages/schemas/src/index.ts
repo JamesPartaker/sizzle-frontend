@@ -6,6 +6,8 @@ export const designNameSchema = z
   .min(1, "Give your design a name.")
   .max(80, "Use 80 characters or fewer.");
 export const designSchema = z.object({
+  revision: z.number().int().nonnegative().optional(),
+  thumbnailUrl: z.string().optional(),
   id: z.string().min(1),
   name: designNameSchema,
   template: z.string(),
@@ -16,6 +18,8 @@ export const designSchema = z.object({
   menuTitle: z.string().optional(),
 });
 export const templateSchema = z.object({
+  revision: z.number().int().nonnegative().optional(),
+  thumbnailUrl: z.string().optional(),
   id: z.string(),
   name: z.string(),
   style: z.string(),

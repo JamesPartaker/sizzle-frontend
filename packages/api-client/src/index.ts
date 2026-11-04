@@ -15,6 +15,7 @@ import type {
 } from "@sizzle/schemas";
 import * as fixtures from "./fixtures";
 export { fixtures };
+export {createGoWorkspaceClient} from './workspace-api';
 
 export interface SizzleClient {
   designs: {

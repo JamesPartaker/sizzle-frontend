@@ -6,6 +6,8 @@ import { AppIcon } from "@sizzle/ui";
 import PageHeading from "../../restaurant/src/components/PageHeading.vue";
 import PageFooter from "../../restaurant/src/components/PageFooter.vue";
 import { adminRepository } from "./data";
+import {templateEditorUrl} from './editor';
+const editorURL=computed(()=>templateEditorUrl(import.meta.env.VITE_EDITOR_URL,id.value,window.location.origin));
 const route = useRoute();
 const id = computed(() => String(route.params.id));
 const query = useQuery({
@@ -21,7 +23,7 @@ const date = (value: string) => new Intl.DateTimeFormat("en-CA", { dateStyle: "m
   <div v-else-if="query.isError.value" class="page-error" role="alert">Couldn’t load this template. <button class="btn" @click="query.refetch()">Try again</button></div>
   <template v-else-if="template">
     <PageHeading eyebrow="THE SIZZLE LIBRARY" :title="template.name" :description="`${template.id} · ${template.type}`"><span :class="['badge', { orange: template.status === 'Draft', gray: template.status === 'Archived' }]">{{ template.status }}</span></PageHeading>
-    <p class="admin-demo-note">Demo template · Details are illustrative.</p>
+    <p v-if="editorURL"><a class="btn primary" :href="editorURL">Open template in editor <AppIcon name="arrow" /></a></p>
     <div class="detail-grid admin-record-details">
       <div>
         <section class="panel"><h2>Template overview</h2><p class="admin-description">{{ template.description }}</p><dl class="admin-detail-list"><div><dt>Template ID</dt><dd>{{ template.id }}</dd></div><div><dt>Stationery type</dt><dd>{{ template.type }}</dd></div><div><dt>Style</dt><dd>{{ template.style }}</dd></div><div><dt>Colour palette</dt><dd>{{ template.palette }}</dd></div></dl><div class="admin-detail-tags" aria-label="Template tags"><span v-for="tag in template.tags" :key="tag" class="chip">{{ tag }}</span></div></section>

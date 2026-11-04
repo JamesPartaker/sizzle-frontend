@@ -88,8 +88,9 @@ const template = (id: string) =>
       >
         <div class="doc-name">
           <div class="doc-thumb">
+            <img v-if="row.original.thumbnailUrl" :src="row.original.thumbnailUrl" :alt="`${row.original.name} preview`" style="width:100%;height:100%;object-fit:contain" loading="lazy" />
             <MenuPreview
-              v-if="template(row.original.template)"
+              v-else-if="template(row.original.template)"
               :template="template(row.original.template)!"
               :title="row.original.menuTitle"
             />

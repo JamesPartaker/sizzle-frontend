@@ -92,8 +92,9 @@ async function confirmDelete() {
     >
     <div class="editor-preview">
       <div id="live-menu">
+        <img v-if="ui.previewDesign?.thumbnailUrl" :src="ui.previewDesign.thumbnailUrl+'?width=1024'" :alt="`${ui.previewDesign.name} preview`" style="width:100%;height:100%;object-fit:contain" />
         <MenuPreview
-          v-if="designTemplate"
+          v-else-if="designTemplate"
           :template="designTemplate"
           :title="ui.previewDesign?.menuTitle"
         />

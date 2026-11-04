@@ -1,14 +1,22 @@
 import { z } from "zod";
+import { validate, type SizzleDocument } from "@sizzle/document";
+export const sizzleDocumentSchema = z.unknown().transform((value) => {
+  validate(value);
+  return value as SizzleDocument;
+});
 
 // Matches the currently checked-in sizzle-go-api controllers and JSON DTOs.
 const documentSchema = z
   .object({
-    Document: z.record(z.string(), z.unknown()),
+    Document: sizzleDocumentSchema,
     DocumentVersion: z.number(),
     CreatedAt: z.string(),
   })
   .passthrough();
 export const goDesignSchema = z.object({
+  source_template_id: z.string().optional(),
+  pages: z.number().int().positive().optional(),
+  status: z.string().optional(),
   revision: z.number().int().nonnegative(),
   design_id: z.string(),
   workspace_id: z.string(),
@@ -19,6 +27,7 @@ export const goDesignSchema = z.object({
   created_at: z.string(),
 });
 export const goAssetSchema = z.object({
+  resource: z.record(z.string(), z.unknown()).optional(),
   id: z.string(),
   filename: z.string(),
   content_type: z.string(),
@@ -28,12 +37,16 @@ export const goAssetSchema = z.object({
 });
 const signedUrlSchema = z.object({
   url: z.string().url(),
-  headers: z.record(z.string(), z.string()).nullable().transform((value) => value || {}),
+  headers: z
+    .record(z.string(), z.string())
+    .nullable()
+    .transform((value) => value || {}),
   expires_in: z.number(),
 });
 export type GoDesign = z.infer<typeof goDesignSchema>;
 export type GoAsset = z.infer<typeof goAssetSchema>;
 export interface GoDesignInput {
+  sourceTemplateId?: string;
   Name: string;
   Description: string;
 }
@@ -85,6 +98,20 @@ export function createGoApiClient(
         })
         .parse(await request("/api/v1/me")),
     designs: {
+      duplicate: async (id: string) =>
+        goDesignSchema.parse(
+          await request(
+            `/api/v1/designs/${encodeURIComponent(id)}/duplicate`,
+            "POST",
+          ),
+        ),
+      restore: async (id: string) =>
+        goDesignSchema.parse(
+          await request(
+            `/api/v1/designs/${encodeURIComponent(id)}/restore`,
+            "POST",
+          ),
+        ),
       list: async () =>
         goDesignSchema
           .array()
@@ -111,18 +138,58 @@ export function createGoApiClient(
       },
       saveDocument: async (
         id: string,
-        Document: Record<string, unknown>,
+        Document: SizzleDocument,
         DocumentVersion: number,
         revision: number,
       ) => {
-        return z.object({ revision: z.number().int().nonnegative() }).parse(
-          await request(
-            `/api/v1/designs/${encodeURIComponent(id)}/document`,
-            "POST",
-            { Document, DocumentVersion, revision },
-          ),
-        );
+        return z
+          .object({
+            revision: z.number().int().nonnegative(),
+            document: sizzleDocumentSchema,
+          })
+          .parse(
+            await request(
+              `/api/v1/designs/${encodeURIComponent(id)}/document`,
+              "POST",
+              { Document, DocumentVersion, revision },
+            ),
+          );
       },
+    },
+    documents: {
+      resolve: async (id: string, revision: number) =>
+        request(
+          `/api/v1/designs/${encodeURIComponent(id)}/resources/resolve`,
+          "POST",
+          { revision },
+        ),
+      pdfUrl: (
+        id: string,
+        revision: number,
+        view: "committed" | "preview" = "committed",
+      ) =>
+        `${origin.replace(/\/$/, "")}/api/v1/designs/${encodeURIComponent(id)}/revisions/${revision}/pdf?view=${view}`,
+      thumbnailUrl: (id: string, revision: number, pageId?: string) =>
+        `${origin.replace(/\/$/, "")}/api/v1/designs/${encodeURIComponent(id)}/revisions/${revision}/thumbnail${pageId ? "?pageId=" + encodeURIComponent(pageId) : ""}`,
+    },
+    templates: {
+      list: async () =>
+        z
+          .array(
+            z.object({
+              id: z.string(),
+              name: z.string(),
+              description: z.string(),
+              category: z.string(),
+              revision: z.number().int().nonnegative(),
+              details: z.record(z.string(), z.unknown()).nullable(),
+            }),
+          )
+          .parse(await request("/api/v1/templates")),
+      get: async (id: string) =>
+        goDesignSchema.parse(
+          await request(`/api/v1/templates/${encodeURIComponent(id)}`),
+        ),
     },
     assets: {
       list: async () =>

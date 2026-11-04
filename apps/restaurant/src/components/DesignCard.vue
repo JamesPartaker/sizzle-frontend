@@ -14,8 +14,9 @@ const { ui, openDesign, duplicate } = useDesignActions();
       :style="{ background: previewColors[design.template] || '#ffe1d2' }"
       @click="openDesign(design)"
     >
+      <img v-if="design.thumbnailUrl" class="document-thumbnail" :src="design.thumbnailUrl" :alt="`${design.name} preview`" loading="lazy" />
       <MenuPreview
-        v-if="template"
+        v-else-if="template"
         :template="template"
         :title="design.menuTitle"
       /><span class="edit-overlay btn"
@@ -40,3 +41,4 @@ const { ui, openDesign, duplicate } = useDesignActions();
     </div>
   </article>
 </template>
+<style scoped>.document-thumbnail{display:block;width:100%;height:100%;object-fit:contain}</style>

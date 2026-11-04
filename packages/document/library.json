@@ -1,0 +1,566 @@
+{
+  "builtin_CormorantGaramond_Italic_wght_ttf": {
+    "file": "CormorantGaramond-Italic-wght.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_CormorantGaramond_Italic_wght_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "0f48ea6abb2084537854f7174c470991a463b13036309e3b50a81511611c530d",
+      "byteLength": 715644
+    },
+    "family": "Cormorant Garamond",
+    "style": "italic",
+    "weight": 300,
+    "axes": {
+      "wght": {
+        "name": "Weight",
+        "min": 300,
+        "default": 300,
+        "max": 700
+      }
+    }
+  },
+  "builtin_CormorantGaramond_wght_ttf": {
+    "file": "CormorantGaramond-wght.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_CormorantGaramond_wght_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "b20b7d9626dd956b2c5e558692ad328b1f19e3275e2782db4fa07670d83f35e0",
+      "byteLength": 1195560
+    },
+    "family": "Cormorant Garamond",
+    "style": "normal",
+    "weight": 300,
+    "axes": {
+      "wght": {
+        "name": "Weight",
+        "min": 300,
+        "default": 300,
+        "max": 700
+      }
+    }
+  },
+  "builtin_DM_Sans_Italic_ttf": {
+    "file": "DM-Sans-Italic.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_DM_Sans_Italic_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "22259c0cc8237221b80f44c76ba8d36e6bce3cda72779f5b2773643d499720ae",
+      "byteLength": 285040
+    },
+    "family": "DM Sans",
+    "style": "italic",
+    "weight": 400,
+    "axes": {
+      "opsz": {
+        "name": "Optical size",
+        "min": 9,
+        "default": 9,
+        "max": 40
+      },
+      "wght": {
+        "name": "Weight",
+        "min": 100,
+        "default": 400,
+        "max": 1000
+      }
+    }
+  },
+  "builtin_DM_Sans_ttf": {
+    "file": "DM-Sans.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_DM_Sans_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "8cd08d97e89c24d0aa92edd2f0f4c8ee6195eee9b7c9f154865a58b02f0c1c0d",
+      "byteLength": 240164
+    },
+    "family": "DM Sans",
+    "style": "normal",
+    "weight": 400,
+    "axes": {
+      "opsz": {
+        "name": "Optical size",
+        "min": 9,
+        "default": 9,
+        "max": 40
+      },
+      "wght": {
+        "name": "Weight",
+        "min": 100,
+        "default": 400,
+        "max": 1000
+      }
+    }
+  },
+  "builtin_DM_Serif_Display_Italic_ttf": {
+    "file": "DM-Serif-Display-Italic.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_DM_Serif_Display_Italic_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "df74c0ac387baeaeb0fe4f2324e1668e6a3ed8c09cd9796fe162c71753e19e45",
+      "byteLength": 71208
+    },
+    "family": "DM Serif Display",
+    "style": "italic",
+    "weight": 400,
+    "axes": {}
+  },
+  "builtin_DM_Serif_Display_ttf": {
+    "file": "DM-Serif-Display.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_DM_Serif_Display_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "8cc3643535edf039aa5d95440a8542735e9197e4f4b8d9303e980fefbf5ab616",
+      "byteLength": 76580
+    },
+    "family": "DM Serif Display",
+    "style": "normal",
+    "weight": 400,
+    "axes": {}
+  },
+  "builtin_Go_Regular_ttf": {
+    "file": "Go-Regular.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_Go_Regular_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "197d9f3703b4c00af609178876a8d73e396f64fe438b2c871778566632374be3",
+      "byteLength": 148672
+    },
+    "family": "Go",
+    "style": "normal",
+    "weight": 400,
+    "axes": {}
+  },
+  "builtin_Inter_Italic_opsz_wght_ttf": {
+    "file": "Inter-Italic-opsz-wght.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_Inter_Italic_opsz_wght_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "acd98e64795781b2058f07b18475e0ecee2a0fe2b42a49e2f9e37d0d6bf66ce6",
+      "byteLength": 906596
+    },
+    "family": "Inter",
+    "style": "italic",
+    "weight": 400,
+    "axes": {
+      "opsz": {
+        "name": "Optical size",
+        "min": 14,
+        "default": 14,
+        "max": 32
+      },
+      "wght": {
+        "name": "Weight",
+        "min": 100,
+        "default": 400,
+        "max": 900
+      }
+    }
+  },
+  "builtin_Inter_opsz_wght_ttf": {
+    "file": "Inter-opsz-wght.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_Inter_opsz_wght_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031",
+      "byteLength": 876576
+    },
+    "family": "Inter",
+    "style": "normal",
+    "weight": 400,
+    "axes": {
+      "opsz": {
+        "name": "Optical size",
+        "min": 14,
+        "default": 14,
+        "max": 32
+      },
+      "wght": {
+        "name": "Weight",
+        "min": 100,
+        "default": 400,
+        "max": 900
+      }
+    }
+  },
+  "builtin_LibreBaskerville_Italic_wght_ttf": {
+    "file": "LibreBaskerville-Italic-wght.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_LibreBaskerville_Italic_wght_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "223959683dc73ec4437bd61fabaa4b3f22209e22855ffd3aee36ba61a5116e97",
+      "byteLength": 167456
+    },
+    "family": "Libre Baskerville",
+    "style": "italic",
+    "weight": 400,
+    "axes": {
+      "wght": {
+        "name": "Weight",
+        "min": 400,
+        "default": 400,
+        "max": 700
+      }
+    }
+  },
+  "builtin_LibreBaskerville_wght_ttf": {
+    "file": "LibreBaskerville-wght.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_LibreBaskerville_wght_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "05a95421961341c5b2556285e8415df9db27dab4f4abe22b446b3c6a8b916c5d",
+      "byteLength": 171900
+    },
+    "family": "Libre Baskerville",
+    "style": "normal",
+    "weight": 400,
+    "axes": {
+      "wght": {
+        "name": "Weight",
+        "min": 400,
+        "default": 400,
+        "max": 700
+      }
+    }
+  },
+  "builtin_Lora_Italic_wght_ttf": {
+    "file": "Lora-Italic-wght.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_Lora_Italic_wght_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "22d8d8854b53807aa664ca34f2031a9ed57a1d0dea296b8b96cdd3aad937a2b3",
+      "byteLength": 221232
+    },
+    "family": "Lora",
+    "style": "italic",
+    "weight": 400,
+    "axes": {
+      "wght": {
+        "name": "Weight",
+        "min": 400,
+        "default": 400,
+        "max": 700
+      }
+    }
+  },
+  "builtin_Lora_wght_ttf": {
+    "file": "Lora-wght.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_Lora_wght_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "822a6621ccbe8d97d20ac88c1c41f5615c9c2c202eaa75f272cd452aac6475a7",
+      "byteLength": 212196
+    },
+    "family": "Lora",
+    "style": "normal",
+    "weight": 400,
+    "axes": {
+      "wght": {
+        "name": "Weight",
+        "min": 400,
+        "default": 400,
+        "max": 700
+      }
+    }
+  },
+  "builtin_Montserrat_Italic_wght_ttf": {
+    "file": "Montserrat-Italic-wght.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_Montserrat_Italic_wght_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "51607f316bc020e59f03cbf51543eecffbea501c0b31d73e5b82927c5cca442c",
+      "byteLength": 762376
+    },
+    "family": "Montserrat",
+    "style": "italic",
+    "weight": 100,
+    "axes": {
+      "wght": {
+        "name": "Weight",
+        "min": 100,
+        "default": 100,
+        "max": 900
+      }
+    }
+  },
+  "builtin_Montserrat_wght_ttf": {
+    "file": "Montserrat-wght.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_Montserrat_wght_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "0f7b311b2f3279e4eef9b2f968bcdbab6e28f4daeb1f049f4f278a902bcd82f7",
+      "byteLength": 744936
+    },
+    "family": "Montserrat",
+    "style": "normal",
+    "weight": 100,
+    "axes": {
+      "wght": {
+        "name": "Weight",
+        "min": 100,
+        "default": 100,
+        "max": 900
+      }
+    }
+  },
+  "builtin_Oswald_wght_ttf": {
+    "file": "Oswald-wght.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_Oswald_wght_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "5b38c246e255a12f5712d640d56bcced0472466fc68983d2d0410ec0457c2817",
+      "byteLength": 172088
+    },
+    "family": "Oswald",
+    "style": "normal",
+    "weight": 400,
+    "axes": {
+      "wght": {
+        "name": "Weight",
+        "min": 200,
+        "default": 400,
+        "max": 700
+      }
+    }
+  },
+  "builtin_PlayfairDisplay_Italic_wght_ttf": {
+    "file": "PlayfairDisplay-Italic-wght.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_PlayfairDisplay_Italic_wght_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "a5e26dc5e2e77fb2803a0bf02fd4f81ee136ec8dea863ccdb0c59a263b21378b",
+      "byteLength": 278688
+    },
+    "family": "Playfair Display",
+    "style": "italic",
+    "weight": 400,
+    "axes": {
+      "wght": {
+        "name": "Weight",
+        "min": 400,
+        "default": 400,
+        "max": 900
+      }
+    }
+  },
+  "builtin_PlayfairDisplay_wght_ttf": {
+    "file": "PlayfairDisplay-wght.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_PlayfairDisplay_wght_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "c40f2293766a503bc70cce9e512ef844a4ccb7cbcde792fe2ea31d191917d8d6",
+      "byteLength": 300724
+    },
+    "family": "Playfair Display",
+    "style": "normal",
+    "weight": 400,
+    "axes": {
+      "wght": {
+        "name": "Weight",
+        "min": 400,
+        "default": 400,
+        "max": 900
+      }
+    }
+  },
+  "builtin_Poppins_Bold_ttf": {
+    "file": "Poppins-Bold.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_Poppins_Bold_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "983676516167748b74de6f4771fb384c664fd913acb8b471122ecacf5da5ea6c",
+      "byteLength": 155996
+    },
+    "family": "Poppins",
+    "style": "normal",
+    "weight": 700,
+    "axes": {}
+  },
+  "builtin_Poppins_BoldItalic_ttf": {
+    "file": "Poppins-BoldItalic.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_Poppins_BoldItalic_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "3572ac8116a0ac7317d342262b29937bcbaf94d8f03f90df6fe666fa7e2fb43a",
+      "byteLength": 179108
+    },
+    "family": "Poppins",
+    "style": "italic",
+    "weight": 700,
+    "axes": {}
+  },
+  "builtin_Poppins_Italic_ttf": {
+    "file": "Poppins-Italic.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_Poppins_Italic_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "4fa76ae75b40f926420514044722cb97f32186cafd3b38263cc34dad7174d46d",
+      "byteLength": 184544
+    },
+    "family": "Poppins",
+    "style": "italic",
+    "weight": 400,
+    "axes": {}
+  },
+  "builtin_Poppins_Regular_ttf": {
+    "file": "Poppins-Regular.ttf",
+    "resource": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_Poppins_Regular_ttf",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "7e65201e9b79159e2300267cc885e16c8dcef2424cdfa09a29bfb0980a94a7ba",
+      "byteLength": 160316
+    },
+    "family": "Poppins",
+    "style": "normal",
+    "weight": 400,
+    "axes": {}
+  },
+  "builtin_sizzle_logo_png": {
+    "file": "sizzle-logo.png",
+    "resource": {
+      "kind": "image",
+      "source": {
+        "scope": "library",
+        "assetId": "builtin_sizzle_logo_png",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "image/png",
+      "sha256": "e711b42f71bdd9319da56e106e7e4c8b922b872a0ed09292133954e5100c310d",
+      "byteLength": 5729,
+      "pixelWidth": 508,
+      "pixelHeight": 115
+    }
+  }
+}

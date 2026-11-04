@@ -1,0 +1,691 @@
+{
+  "format": "sizzle.document",
+  "version": 1,
+  "layoutStatus": "draft",
+  "renderProfile": {
+    "id": "sizzle.fixed",
+    "version": "1.0.0"
+  },
+  "metadata": {
+    "title": "Sizzle dinner and drinks",
+    "description": "Two pages with explicit geometry, a pinned custom font, an image, and editor history.",
+    "locale": "en-CA",
+    "tags": [
+      "menu",
+      "example"
+    ],
+    "origin": {
+      "templateId": "template_warm",
+      "revisionId": "template_revision_1"
+    }
+  },
+  "resources": {
+    "res_logo": {
+      "kind": "image",
+      "source": {
+        "scope": "library",
+        "assetId": "fixture_sizzle_logo",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "image/png",
+      "sha256": "e711b42f71bdd9319da56e106e7e4c8b922b872a0ed09292133954e5100c310d",
+      "byteLength": 5729,
+      "pixelWidth": 508,
+      "pixelHeight": 115
+    },
+    "res_font": {
+      "kind": "font",
+      "source": {
+        "scope": "library",
+        "assetId": "fixture_go_regular",
+        "revisionId": "1",
+        "renditionId": "original"
+      },
+      "mediaType": "font/ttf",
+      "sha256": "197d9f3703b4c00af609178876a8d73e396f64fe438b2c871778566632374be3",
+      "byteLength": 148672
+    }
+  },
+  "fonts": {
+    "font_body": {
+      "resourceId": "res_font",
+      "family": "Go Regular",
+      "weight": 400,
+      "style": "normal",
+      "axes": {},
+      "features": {
+        "kern": 1,
+        "liga": 1
+      },
+      "fallbackFontIds": []
+    }
+  },
+  "pages": [
+    {
+      "id": "page_dinner",
+      "name": "Dinner",
+      "width": 612,
+      "height": 792,
+      "bleed": {
+        "top": 9,
+        "right": 9,
+        "bottom": 9,
+        "left": 9
+      },
+      "background": "#fff9edff",
+      "rootIds": [
+        "dinner_header",
+        "dinner_rule",
+        "dinner_item",
+        "dinner_note"
+      ],
+      "guides": {
+        "x": [
+          42,
+          570
+        ],
+        "y": [
+          42,
+          750
+        ],
+        "safeInset": {
+          "top": 18,
+          "right": 18,
+          "bottom": 18,
+          "left": 18
+        }
+      },
+      "extensions": {}
+    },
+    {
+      "id": "page_drinks",
+      "name": "Drinks card",
+      "width": 360,
+      "height": 504,
+      "bleed": {
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      },
+      "background": "#f3e7d9ff",
+      "rootIds": [
+        "drinks_border",
+        "drinks_title",
+        "drinks_item",
+        "drinks_price",
+        "drinks_accent"
+      ],
+      "guides": {
+        "x": [
+          30,
+          330
+        ],
+        "y": [
+          30,
+          474
+        ],
+        "safeInset": {
+          "top": 12,
+          "right": 12,
+          "bottom": 12,
+          "left": 12
+        }
+      },
+      "extensions": {}
+    }
+  ],
+  "nodes": {
+    "dinner_header": {
+      "type": "group",
+      "name": "Dinner header",
+      "frame": {
+        "width": 528,
+        "height": 140
+      },
+      "transform": {
+        "x": 42,
+        "y": 42,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "originX": 0,
+        "originY": 0
+      },
+      "opacity": 1,
+      "visible": true,
+      "locked": false,
+      "extensions": {},
+      "childIds": [
+        "brand_logo",
+        "dinner_title"
+      ],
+      "clip": null
+    },
+    "brand_logo": {
+      "type": "image",
+      "name": "Sizzle logo",
+      "frame": {
+        "width": 100,
+        "height": 22.637795275590552
+      },
+      "transform": {
+        "x": 0,
+        "y": 0,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "originX": 0,
+        "originY": 0
+      },
+      "opacity": 1,
+      "visible": true,
+      "locked": false,
+      "extensions": {},
+      "resourceId": "res_logo",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 508,
+        "height": 115
+      }
+    },
+    "dinner_title": {
+      "type": "text",
+      "name": "Dinner heading",
+      "frame": {
+        "width": 450,
+        "height": 48
+      },
+      "transform": {
+        "x": 8,
+        "y": 82,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "originX": 0,
+        "originY": 0
+      },
+      "opacity": 1,
+      "visible": true,
+      "locked": false,
+      "extensions": {},
+      "text": {
+        "runs": [
+          {
+            "id": "run_dinner_title",
+            "text": "DINNER",
+            "fontId": "font_body",
+            "fontSize": 38,
+            "color": "#432f2aff",
+            "letterSpacing": 0,
+            "underline": false,
+            "textCase": "none"
+          }
+        ],
+        "paragraph": {
+          "align": "left",
+          "direction": "ltr",
+          "language": "en-CA",
+          "lineHeight": 48,
+          "wrap": "none",
+          "overflow": "clip",
+          "verticalAlign": "top"
+        },
+        "layout": null
+      }
+    },
+    "dinner_rule": {
+      "type": "path",
+      "name": "Header rule",
+      "frame": {
+        "width": 528,
+        "height": 1
+      },
+      "transform": {
+        "x": 42,
+        "y": 195,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "originX": 0,
+        "originY": 0
+      },
+      "opacity": 1,
+      "visible": true,
+      "locked": false,
+      "extensions": {},
+      "d": "M 0 0 L 528 0",
+      "fill": null,
+      "stroke": {
+        "color": "#432f2aff",
+        "width": 0.75,
+        "dash": [],
+        "cap": "butt",
+        "join": "miter",
+        "miterLimit": 4
+      },
+      "fillRule": "nonzero"
+    },
+    "dinner_item": {
+      "type": "group",
+      "name": "Menu item",
+      "frame": {
+        "width": 528,
+        "height": 68
+      },
+      "transform": {
+        "x": 42,
+        "y": 222,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "originX": 0,
+        "originY": 0
+      },
+      "opacity": 1,
+      "visible": true,
+      "locked": false,
+      "extensions": {},
+      "childIds": [
+        "dinner_name",
+        "dinner_description",
+        "dinner_price"
+      ],
+      "clip": null
+    },
+    "dinner_name": {
+      "type": "text",
+      "name": "Dish name",
+      "frame": {
+        "width": 440,
+        "height": 28
+      },
+      "transform": {
+        "x": 0,
+        "y": 0,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "originX": 0,
+        "originY": 0
+      },
+      "opacity": 1,
+      "visible": true,
+      "locked": false,
+      "extensions": {},
+      "text": {
+        "runs": [
+          {
+            "id": "run_dinner_name",
+            "text": "Roasted carrots",
+            "fontId": "font_body",
+            "fontSize": 19,
+            "color": "#432f2aff",
+            "letterSpacing": 0,
+            "underline": false,
+            "textCase": "none"
+          }
+        ],
+        "paragraph": {
+          "align": "left",
+          "direction": "ltr",
+          "language": "en-CA",
+          "lineHeight": 28,
+          "wrap": "none",
+          "overflow": "clip",
+          "verticalAlign": "top"
+        },
+        "layout": null
+      }
+    },
+    "dinner_description": {
+      "type": "text",
+      "name": "Dish description",
+      "frame": {
+        "width": 440,
+        "height": 18
+      },
+      "transform": {
+        "x": 0,
+        "y": 34,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "originX": 0,
+        "originY": 0
+      },
+      "opacity": 1,
+      "visible": true,
+      "locked": false,
+      "extensions": {},
+      "text": {
+        "runs": [
+          {
+            "id": "run_dinner_description",
+            "text": "Herbs, whipped feta, toasted seeds",
+            "fontId": "font_body",
+            "fontSize": 11,
+            "color": "#84695eff",
+            "letterSpacing": 0,
+            "underline": false,
+            "textCase": "none"
+          }
+        ],
+        "paragraph": {
+          "align": "left",
+          "direction": "ltr",
+          "language": "en-CA",
+          "lineHeight": 18,
+          "wrap": "none",
+          "overflow": "clip",
+          "verticalAlign": "top"
+        },
+        "layout": null
+      }
+    },
+    "dinner_price": {
+      "type": "text",
+      "name": "Dish price",
+      "frame": {
+        "width": 40,
+        "height": 28
+      },
+      "transform": {
+        "x": 488,
+        "y": 0,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "originX": 0,
+        "originY": 0
+      },
+      "opacity": 1,
+      "visible": true,
+      "locked": false,
+      "extensions": {},
+      "text": {
+        "runs": [
+          {
+            "id": "run_dinner_price",
+            "text": "18",
+            "fontId": "font_body",
+            "fontSize": 19,
+            "color": "#432f2aff",
+            "letterSpacing": 0,
+            "underline": false,
+            "textCase": "none"
+          }
+        ],
+        "paragraph": {
+          "align": "left",
+          "direction": "ltr",
+          "language": "en-CA",
+          "lineHeight": 28,
+          "wrap": "none",
+          "overflow": "clip",
+          "verticalAlign": "top"
+        },
+        "layout": null
+      }
+    },
+    "dinner_note": {
+      "type": "text",
+      "name": "Allergy note",
+      "frame": {
+        "width": 528,
+        "height": 16
+      },
+      "transform": {
+        "x": 42,
+        "y": 734,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "originX": 0,
+        "originY": 0
+      },
+      "opacity": 1,
+      "visible": true,
+      "locked": false,
+      "extensions": {},
+      "text": {
+        "runs": [
+          {
+            "id": "run_dinner_note",
+            "text": "Please tell us about any allergies.",
+            "fontId": "font_body",
+            "fontSize": 10,
+            "color": "#84695eff",
+            "letterSpacing": 0,
+            "underline": false,
+            "textCase": "none"
+          }
+        ],
+        "paragraph": {
+          "align": "left",
+          "direction": "ltr",
+          "language": "en-CA",
+          "lineHeight": 16,
+          "wrap": "none",
+          "overflow": "clip",
+          "verticalAlign": "top"
+        },
+        "layout": null
+      }
+    },
+    "drinks_border": {
+      "type": "rect",
+      "name": "Card border",
+      "frame": {
+        "width": 312,
+        "height": 456
+      },
+      "transform": {
+        "x": 24,
+        "y": 24,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "originX": 0,
+        "originY": 0
+      },
+      "opacity": 1,
+      "visible": true,
+      "locked": false,
+      "extensions": {},
+      "fill": null,
+      "stroke": {
+        "color": "#84695eff",
+        "width": 0.75,
+        "dash": [],
+        "cap": "butt",
+        "join": "miter",
+        "miterLimit": 4
+      },
+      "cornerRadius": 8
+    },
+    "drinks_title": {
+      "type": "text",
+      "name": "Drinks heading",
+      "frame": {
+        "width": 270,
+        "height": 38
+      },
+      "transform": {
+        "x": 45,
+        "y": 64,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "originX": 0,
+        "originY": 0
+      },
+      "opacity": 1,
+      "visible": true,
+      "locked": false,
+      "extensions": {},
+      "text": {
+        "runs": [
+          {
+            "id": "run_drinks_title",
+            "text": "DRINKS",
+            "fontId": "font_body",
+            "fontSize": 28,
+            "color": "#432f2aff",
+            "letterSpacing": 0,
+            "underline": false,
+            "textCase": "none"
+          }
+        ],
+        "paragraph": {
+          "align": "left",
+          "direction": "ltr",
+          "language": "en-CA",
+          "lineHeight": 38,
+          "wrap": "none",
+          "overflow": "clip",
+          "verticalAlign": "top"
+        },
+        "layout": null
+      }
+    },
+    "drinks_item": {
+      "type": "text",
+      "name": "Drink name",
+      "frame": {
+        "width": 220,
+        "height": 26
+      },
+      "transform": {
+        "x": 45,
+        "y": 150,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "originX": 0,
+        "originY": 0
+      },
+      "opacity": 1,
+      "visible": true,
+      "locked": false,
+      "extensions": {},
+      "text": {
+        "runs": [
+          {
+            "id": "run_drinks_item",
+            "text": "House lemonade",
+            "fontId": "font_body",
+            "fontSize": 16,
+            "color": "#432f2aff",
+            "letterSpacing": 0,
+            "underline": false,
+            "textCase": "none"
+          }
+        ],
+        "paragraph": {
+          "align": "left",
+          "direction": "ltr",
+          "language": "en-CA",
+          "lineHeight": 26,
+          "wrap": "none",
+          "overflow": "clip",
+          "verticalAlign": "top"
+        },
+        "layout": null
+      }
+    },
+    "drinks_price": {
+      "type": "text",
+      "name": "Drink price",
+      "frame": {
+        "width": 28,
+        "height": 26
+      },
+      "transform": {
+        "x": 285,
+        "y": 150,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "originX": 0,
+        "originY": 0
+      },
+      "opacity": 1,
+      "visible": true,
+      "locked": false,
+      "extensions": {},
+      "text": {
+        "runs": [
+          {
+            "id": "run_drinks_price",
+            "text": "7",
+            "fontId": "font_body",
+            "fontSize": 16,
+            "color": "#432f2aff",
+            "letterSpacing": 0,
+            "underline": false,
+            "textCase": "none"
+          }
+        ],
+        "paragraph": {
+          "align": "left",
+          "direction": "ltr",
+          "language": "en-CA",
+          "lineHeight": 26,
+          "wrap": "none",
+          "overflow": "clip",
+          "verticalAlign": "top"
+        },
+        "layout": null
+      }
+    },
+    "drinks_accent": {
+      "type": "ellipse",
+      "name": "Small accent",
+      "frame": {
+        "width": 6,
+        "height": 6
+      },
+      "transform": {
+        "x": 177,
+        "y": 424,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "originX": 0,
+        "originY": 0
+      },
+      "opacity": 1,
+      "visible": true,
+      "locked": false,
+      "extensions": {},
+      "fill": {
+        "type": "solid",
+        "color": "#432f2aff"
+      },
+      "stroke": null
+    }
+  },
+  "extensions": {
+    "com.sizzle.menu": {
+      "version": 1,
+      "currency": "CAD",
+      "density": "normal",
+      "showDescriptions": true,
+      "items": [
+        {
+          "id": "item_carrots",
+          "nameNodeId": "dinner_name",
+          "descriptionNodeId": "dinner_description",
+          "priceNodeId": "dinner_price",
+          "priceMinor": 1800,
+          "dietary": [
+            "vegetarian"
+          ]
+        }
+      ]
+    }
+  }
+}
