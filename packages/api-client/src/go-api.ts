@@ -10,7 +10,7 @@ const documentSchema = z
   .passthrough();
 export const goDesignSchema = z.object({
   design_id: z.string(),
-  workspace_id: z.number(),
+  workspace_id: z.string(),
   name: z.string(),
   description: z.string(),
   document: documentSchema.optional(),
@@ -69,7 +69,7 @@ export function createGoApiClient(
       z
         .object({
           EmailAddress: z.string(),
-          WorkspaceId: z.number(),
+          WorkspaceId: z.string(),
           Role: z.string(),
         })
         .parse(await request("/api/v1/me")),
