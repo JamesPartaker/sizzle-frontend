@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isLiveAssets } from "../api";
 import { computed, ref } from "vue";
 import { useDropZone } from "@vueuse/core";
 import { AppIcon } from "@sizzle/ui";
@@ -8,7 +9,7 @@ import { useWorkspaceStore } from "../stores/workspace";
 import PageHeading from "../components/PageHeading.vue";
 import PageFooter from "../components/PageFooter.vue";
 import QueryState from "../components/QueryState.vue";
-const { assets, upload } = useWorkspaceData();
+const { assets, upload, storage, removeAsset } = useWorkspaceData();
 const ui = useWorkspaceStore();
 const search = ref(""),
   type = ref("All assets");
@@ -94,6 +95,7 @@ function choose(event: Event) {
       &nbsp; · &nbsp; Up to 20 MB each
     </p>
   </div>
+  <p v-if="storage.data.value" class="results-meta">Storage: {{ Math.ceil(storage.data.value.used_bytes / 1048576) }} MB used · {{ Math.ceil(storage.data.value.reserved_bytes / 1048576) }} MB reserved · {{ Math.floor(storage.data.value.limit_bytes / 1048576) }} MB limit</p>
   <div class="toolbar">
     <label class="search"
       ><AppIcon name="search" /><input
@@ -158,6 +160,7 @@ function choose(event: Event) {
         <div class="design-info">
           <strong>{{ asset.name }}</strong>
           <p>{{ asset.size }}</p>
+          <button v-if="isLiveAssets" class="text-link" :disabled="removeAsset.isPending.value" @click="removeAsset.mutate(asset.id)">Delete asset</button>
         </div>
       </article>
       <div v-if="!filtered.length" class="empty">

@@ -1,6 +1,6 @@
-import { createGoApiClient, type GoDesign } from "./go-api";
+import { createGoApiClient, type GoOrder, type GoDesign } from "./go-api";
 import type { SizzleClient } from "./index";
-import type { Design, Template } from "@sizzle/schemas";
+import type { Design, Template, PrintOrder } from "@sizzle/schemas";
 
 /** Production workspace adapter to the same versioned API used by the editor. */
 export function createGoWorkspaceClient(
@@ -21,6 +21,14 @@ export function createGoWorkspaceClient(
     thumbnailUrl: d.revision
       ? go.documents.thumbnailUrl(d.design_id, d.revision)
       : undefined,
+  });
+  const order = (o: GoOrder): PrintOrder => ({
+    id: o.id, name: o.name, template: "", qty: o.quantity, date: o.placedAt,
+    status: o.status, total: o.total, delivery: o.delivery.estimate,
+    paper: o.items[0]?.paper || "", items: o.items,
+    subtotal: o.subtotal, shipping: o.shipping, tax: o.tax,
+    shippingAddress: o.shippingAddress, billingAddress: o.billingAddress,
+    payment: o.payment, deliveryDetails: o.delivery,
   });
   return {
     designs: {
@@ -79,13 +87,8 @@ export function createGoWorkspaceClient(
       },
     },
     orders: {
-      list: async () => {
-        const response = await fetcher(`${base}/orders`, {
-          credentials: "include",
-        });
-        if (!response.ok) throw new Error("Order service is unavailable");
-        return response.json();
-      },
+      list: async () => (await go.orders.list()).map(order),
+      get: async (id) => order(await go.orders.get(id)),
     },
   };
 }

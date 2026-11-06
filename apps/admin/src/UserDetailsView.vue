@@ -30,7 +30,7 @@ const save = useMutation({
       client.invalidateQueries({ queryKey: ["admin", "users"] }),
       client.invalidateQueries({ queryKey: ["admin", "user-details", id.value] }),
     ]);
-    notice.value = "User details updated in this demo session.";
+    notice.value = "User details saved.";
   },
 });
 function submit() {
@@ -50,7 +50,6 @@ const date = (value: string) => new Intl.DateTimeFormat("en-CA", { dateStyle: "m
   <div v-else-if="query.isError.value" class="page-error" role="alert">Couldn’t load this user. <button class="btn" @click="query.refetch()">Try again</button></div>
   <template v-else-if="user">
     <PageHeading eyebrow="THE PEOPLE BEHIND THE MENUS" :title="user.name" :description="`${user.id} · ${user.restaurant}`"><span :class="['badge', { orange: user.status === 'Invited', gray: user.status === 'Suspended' }]">{{ user.status }}</span></PageHeading>
-    <p class="admin-demo-note">Demo user · Changes last for this session.</p>
     <div v-if="notice" class="admin-notice" role="status">{{ notice }}</div>
     <div class="detail-grid admin-record-details">
       <div>

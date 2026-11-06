@@ -103,3 +103,20 @@ it("API schema preserves complete document session and unknown extension payload
     checkpoint,
   );
 });
+
+it("loads customer history and exact details with actual financial values", async () => {
+  const snapshot = { id: "order", name: "Dinner", status: "Shipped", quantity: 200, total: 147.5,
+    placedAt: "2026-11-05T12:00:00Z", updatedAt: "2026-11-05T13:00:00Z", customerName: "Jane",
+    shippingAddress: ["Oak restaurant"], billingAddress: [], items: [], subtotal: 125, shipping: 10, tax: 12.5,
+    payment: { status: "Paid", method: "Visa ending 1234" },
+    delivery: { method: "Standard", estimate: "Nov 10", carrier: "Courier", tracking: "TRACK123" } };
+  const calls: string[] = [];
+  const client = createGoWorkspaceClient("https://api.test", async (url, init) => {
+    calls.push(String(url));
+    expect(init?.credentials).toBe("include");
+    return Response.json(String(url).endsWith("/orders") ? [snapshot] : snapshot);
+  });
+  expect((await client.orders.list())[0]).toMatchObject({ qty: 200, status: "Shipped", total: 147.5 });
+  expect(await client.orders.get("order")).toMatchObject({ shipping: 10, tax: 12.5, deliveryDetails: { tracking: "TRACK123" } });
+  expect(calls).toEqual(["https://api.test/api/v1/orders", "https://api.test/api/v1/orders/order"]);
+});

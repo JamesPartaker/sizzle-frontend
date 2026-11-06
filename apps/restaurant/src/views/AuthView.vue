@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useQueryClient } from "@tanstack/vue-query";
 import { MenuPreview } from "@sizzle/ui";
 import { GoApiError, fixtures } from "@sizzle/api-client";
 import { authApi, isLiveAuth } from "../auth";
 const brandTemplates = fixtures.templates.filter(template => ["after", "sunday"].includes(template.id));
 const route = useRoute();
 const router = useRouter();
+const queryClient = useQueryClient();
 const registering = computed(() => route.name === "register");
 const email = ref("");
 const password = ref("");
 const visible = ref(false);
 const pending = ref(false);
-const message = ref("");
+const message = ref(route.query.error === "profile" ? "We couldn’t load your profile. Please try signing in again." : "");
 const error = ref(false);
 const info = ref<HTMLDialogElement | null>(null);
 const infoTitle = ref("");
@@ -53,6 +55,7 @@ async function submit() {
   try {
     await authApi.auth[registering.value ? "register" : "login"](email.value.trim(), password.value);
     password.value = "";
+    queryClient.clear();
     await router.replace("/dashboard");
   } catch (cause) {
     error.value = true;
@@ -66,8 +69,8 @@ async function submit() {
   }
 }
 function google() {
-  if (isLiveAuth) window.location.assign(authApi.auth.googleUrl);
-  else { error.value = false; message.value = "Google sign-in is available when API authentication is connected. You can explore the demo workspace below."; }
+  error.value = false;
+  message.value = "Google sign-in is not configured yet. Please use email and password.";
 }
 </script>
 <template>

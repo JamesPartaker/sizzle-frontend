@@ -7,7 +7,7 @@ import PageHeading from "../../restaurant/src/components/PageHeading.vue";
 import PageFooter from "../../restaurant/src/components/PageFooter.vue";
 import { adminRepository } from "./data";
 import {templateEditorUrl} from './editor';
-const editorURL=computed(()=>templateEditorUrl(import.meta.env.VITE_EDITOR_URL,id.value,window.location.origin));
+const editorURL=computed(()=>templateEditorUrl(import.meta.env.VITE_EDITOR_URL || (import.meta.env.DEV ? "http://localhost:1234" : "/editor/"),id.value,window.location.origin));
 const route = useRoute();
 const id = computed(() => String(route.params.id));
 const query = useQuery({

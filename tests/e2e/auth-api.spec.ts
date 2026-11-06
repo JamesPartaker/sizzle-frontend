@@ -2,6 +2,12 @@ import { expect, test } from "@playwright/test";
 
 test.skip(process.env.VITE_AUTH_SOURCE !== "api", "Run with VITE_AUTH_SOURCE=api to exercise the Go auth integration.");
 
+test.beforeEach(async ({ page }) => {
+  await page.route("**/api/v1/me", route => route.fulfill({ json: {
+    UserId: "owner", EmailAddress: "owner@example.com", WorkspaceId: "workspace", Role: "USER", Name: "Owner", Restaurant: "Restaurant", Status: "Active",
+  } }));
+});
+
 for (const mode of ["login", "register"]) {
   test(`${mode} handles a server error, then a cookie-session success`, async ({ page }) => {
     const payloads: unknown[] = [];

@@ -11,7 +11,7 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Open http://127.0.0.1:4173. Demo mode works immediately, with browser-local persistence for designs and uploaded images. Demo records, print totals, profile details, and delivery addresses are illustrative.
+Open http://localhost:4173. The workspace uses the Go API on port 1323 by default. Sign in with email and password. See [integration setup](docs/integration.md) for origins, cookies, storage, and editor configuration. To run the browser-local demo explicitly, set `VITE_DATA_SOURCE=demo` and `VITE_AUTH_SOURCE=demo`.
 
 ```sh
 pnpm typecheck
@@ -57,21 +57,9 @@ sizzle/
 
 ## Administrator workspace
 
-Run `pnpm dev:admin` and open http://127.0.0.1:4174. Routes: `/templates`, `/designs`, `/users`, `/orders`, `/orders/:id`. Order details include items and print specifications, customer contact, shipping and billing addresses, payment, delivery/tracking, notes, totals, and an inline status form. The detail repository method requests only the selected order; all details are illustrative demo data. The app reuses the restaurant typography, colours, navigation, headings, footer and accessible dialogs, with compact table rows. `pnpm build` and `pnpm typecheck` include both apps; `pnpm preview:admin` previews the admin build.
+Run `pnpm dev:admin` and open http://localhost:4174. Searches, details, user edits, and order status updates use the database-backed `/api/v1/admin` routes. Sign in through the restaurant app with an admin account on the same API origin. Server authorization is checked for every request.
 
-User search results link to `/users/:id`, which loads one user through `getUser`. The details page shows profile and account metadata and an inline form for updating name, email, restaurant, and account status. Updates refresh that user’s details and the user search cache. Loading, retry, reset, and missing-user states are included; no API calls are implemented.
-
-Template and design search results link to `/templates/:id` and `/designs/:id`. These pages load one record through `getTemplate` / `getDesign`, with cancellation and loading, retry, and not-found states. Template details include classification, tags, dimensions, pages, bleed, fonts, publication metadata, and usage. Design details include owner information, document metadata, activity, and a link to the source template.
-
-To connect the design details editor button, copy `apps/admin/.env.example` to `.env.local` in that directory and set `VITE_EDITOR_URL` to the editor deployment, then restart Vite. The button opens a new tab with `?documentId=<selected document ID>`, preserving other URL parameters. Without configuration it shows an unavailable state. Demo IDs are illustrative; loading the actual document requires the editor’s document integration.
-
-The administrator uses an in-memory demo repository and makes no API calls. User detail and order status edits last until reload. It does not implement authentication or authorization; production access must be enforced by the server.
-
-`apps/admin/src/data.ts` defines the replaceable `AdminRepository` boundary. Each search passes the query, status, sort, bounded limit (25/50/100), page number and AbortSignal. Implement filtering, stable sorting (with an ID tie-breaker), and pagination on the server; return only `{ items, totalItems }`. Never fetch the complete dataset to paginate in the browser. The server should index filters/sorts and cache count metadata per search so numbered navigation does not repeat an expensive count for each page.
-
-Search is debounced 300ms; filter/sort/size changes reset the page. TanStack Query cancels obsolete requests, keys caches by all search parameters, and expires inactive pages after 60 seconds. Centered pagination shows the first/last pages, two neighbours on either side of the current page, and ellipses for omitted pages. Number buttons request the selected page directly. User/order mutations invalidate only the relevant search namespace. Connect real mutation methods at the same repository boundary.
-
-Run `pnpm test:e2e:admin` for desktop/mobile search, pagination, and edit flows (`pnpm exec playwright install chromium` once first).
+Set `VITE_API_BASE_URL` and `VITE_EDITOR_URL` using `apps/admin/.env.example` when deploying separately. The editor receives `documentId` or `templateId`. See [integration contracts and checks](docs/integration.md).
 
 ## Stack and boundaries
 

@@ -21,6 +21,18 @@ export function useWorkspaceData() {
     gcTime: isLiveAssets ? 0 : undefined,
     refetchInterval: isLiveAssets ? 4 * 60 * 1000 : false,
   });
+  const storage = useQuery({
+    queryKey: ["asset-storage"], enabled: isLiveAssets,
+    queryFn: () => assetApi.storage!(),
+  });
+  const removeAsset = useMutation({
+    mutationFn: (id: string) => assetApi.remove!(id),
+    onSuccess: () => {
+      void query.invalidateQueries({ queryKey: ["assets"] });
+      void query.invalidateQueries({ queryKey: ["asset-storage"] });
+    },
+    onError: (error: Error) => ui.notify(error.message),
+  });
   const orders = useQuery({
     queryKey: ["orders"],
     queryFn: () => api.orders.list(),
@@ -60,7 +72,10 @@ export function useWorkspaceData() {
   });
   const upload = useMutation({
     mutationFn: (file: File) => assetApi.upload(file),
-    onSuccess: () => query.invalidateQueries({ queryKey: ["assets"] }),
+    onSuccess: () => {
+      void query.invalidateQueries({ queryKey: ["assets"] });
+      void query.invalidateQueries({ queryKey: ["asset-storage"] });
+    },
     onError,
   });
   return {
@@ -74,5 +89,7 @@ export function useWorkspaceData() {
     remove,
     restore,
     upload,
+    storage,
+    removeAsset,
   };
 }

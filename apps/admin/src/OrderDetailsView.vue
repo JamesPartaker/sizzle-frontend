@@ -24,7 +24,7 @@ const save = useMutation({
       client.invalidateQueries({ queryKey: ["admin", "orders"] }),
       client.invalidateQueries({ queryKey: ["admin", "order-details", id.value] }),
     ]);
-    notice.value = "Order status updated in this demo session.";
+    notice.value = "Order status saved.";
   },
 });
 const money = (value: number) => new Intl.NumberFormat("en-CA", { style: "currency", currency: "CAD" }).format(value);
@@ -36,7 +36,6 @@ const date = (value: string) => new Intl.DateTimeFormat("en-CA", { dateStyle: "m
   <div v-else-if="query.isError.value" class="page-error" role="alert">Couldn’t load this order. <button class="btn" @click="query.refetch()">Try again</button></div>
   <template v-else-if="order">
     <PageHeading eyebrow="FROM SCREEN TO TABLE" :title="`Order #${order.id}`" :description="`Placed ${date(order.placedAt)} · ${order.restaurant}`"><span :class="['badge', { orange: ['Pending', 'In production'].includes(order.status), gray: order.status === 'Cancelled' }]">{{ order.status }}</span></PageHeading>
-    <p class="admin-demo-note">Demo order · All customer, payment and delivery details are illustrative.</p>
     <div v-if="notice" class="admin-notice" role="status">{{ notice }}</div>
     <div class="detail-grid admin-order-details">
       <div>

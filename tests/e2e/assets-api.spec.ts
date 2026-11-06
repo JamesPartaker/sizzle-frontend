@@ -1,6 +1,9 @@
 import { expect, test } from "@playwright/test";
 
 test.skip(process.env.VITE_ASSET_SOURCE !== "api", "Run with VITE_ASSET_SOURCE=api.");
+test.beforeEach(async ({ page }) => {
+  await page.route("**/api/v1/assets/storage", route => route.fulfill({ json: { limit_bytes: 1048576, used_bytes: 0, reserved_bytes: 0 } }));
+});
 const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aD1EAAAAASUVORK5CYII=", "base64");
 const asset = {
   id: "019a4500-0000-7000-8000-000000000001", filename: "logo.png",
@@ -42,6 +45,13 @@ test("uploads bytes, completes, displays a private preview, and reloads server a
   await page.reload();
   await expect(card).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem("sizzle-assets"))).toBeNull();
+  await page.route(`**/api/v1/assets/${asset.id}`, async route => {
+    expect(route.request().method()).toBe("DELETE");
+    ready = false;
+    await route.fulfill({ status: 204 });
+  });
+  await card.getByRole("button", { name: "Delete asset", exact: true }).click();
+  await expect(card).toHaveCount(0);
 });
 
 test("reports quota failures and lets the same file be selected again", async ({ page }) => {

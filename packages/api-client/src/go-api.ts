@@ -35,6 +35,17 @@ export const goAssetSchema = z.object({
   state: z.string(),
   created_at: z.string(),
 });
+export const goOrderSchema = z.object({
+  id: z.string(), name: z.string(), quantity: z.number(), total: z.number(),
+  status: z.enum(["Pending", "In production", "Shipped", "Delivered", "Cancelled"]),
+  placedAt: z.string(), updatedAt: z.string(), customerName: z.string(),
+  shippingAddress: z.array(z.string()), billingAddress: z.array(z.string()),
+  items: z.array(z.object({ designId: z.string().optional(), name: z.string(), quantity: z.number(), size: z.string(), sides: z.string(), paper: z.string(), finish: z.string(), amount: z.number() })),
+  subtotal: z.number().nullable(), shipping: z.number().nullable(), tax: z.number().nullable(),
+  payment: z.object({ status: z.string(), method: z.string() }),
+  delivery: z.object({ method: z.string(), estimate: z.string(), carrier: z.string().nullable(), tracking: z.string().nullable() }),
+});
+export type GoOrder = z.infer<typeof goOrderSchema>;
 const signedUrlSchema = z.object({
   url: z.string().url(),
   headers: z
@@ -80,7 +91,12 @@ export function createGoApiClient(
     return noContent || response.status === 204 ? undefined : response.json();
   }
   return {
+    orders: {
+      list: async () => goOrderSchema.array().parse(await request("/api/v1/orders")),
+      get: async (id: string) => goOrderSchema.parse(await request(`/api/v1/orders/${encodeURIComponent(id)}`)),
+    },
     auth: {
+      logout: async () => { await request("/logout", "POST", undefined, true); },
       login: async (emailAddress: string, password: string) => {
         await request("/login", "POST", { emailAddress, password }, true);
       },
@@ -95,6 +111,7 @@ export function createGoApiClient(
           EmailAddress: z.string(),
           WorkspaceId: z.string(),
           Role: z.string(),
+          UserId: z.string(), Name: z.string(), Restaurant: z.string(), Status: z.string(),
         })
         .parse(await request("/api/v1/me")),
     designs: {

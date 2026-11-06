@@ -4,9 +4,22 @@ import { useRoute } from "vue-router";
 import { AppIcon } from "@sizzle/ui";
 import { useWorkspaceData } from "../composables/useWorkspaceData";
 import { useWorkspaceStore } from "../stores/workspace";
+import { authApi, isLiveAuth } from "../auth";
+import { useQueryClient } from "@tanstack/vue-query";
+import { useRouter } from "vue-router";
 import { isDemo } from "../api";
 import WorkspaceDialogs from "./WorkspaceDialogs.vue";
 const route = useRoute();
+const router = useRouter();
+const queryClient = useQueryClient();
+async function logout() {
+  try {
+    await authApi.auth.logout();
+    queryClient.clear();
+    ui.session = { name: "", initials: "", restaurant: "" };
+    await router.replace("/login");
+  } catch { ui.notify("Could not sign out. Please try again."); }
+}
 const ui = useWorkspaceStore();
 const { designs, restore } = useWorkspaceData();
 const navs = [
@@ -80,6 +93,7 @@ function undo() {
           Visit the help kitchen <AppIcon name="arrow" />
         </button>
       </div>
+      <button v-if="isLiveAuth" class="text-link" @click="logout">Sign out</button>
       <div class="profile">
         <div class="avatar">{{ ui.session.initials }}</div>
         <div>

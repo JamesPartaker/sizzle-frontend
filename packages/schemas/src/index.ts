@@ -46,10 +46,18 @@ export const orderSchema = z.object({
   template: z.string(),
   qty: z.number(),
   date: z.string(),
-  status: z.enum(["In production", "Delivered", "Cancelled"]),
+  status: z.enum(["Pending", "In production", "Shipped", "Delivered", "Cancelled"]),
   total: z.number(),
   delivery: z.string(),
   paper: z.string(),
+  subtotal: z.number().nullable().optional(),
+  shipping: z.number().nullable().optional(),
+  tax: z.number().nullable().optional(),
+  shippingAddress: z.array(z.string()).optional(),
+  billingAddress: z.array(z.string()).optional(),
+  items: z.array(z.object({ designId: z.string().optional(), name: z.string(), quantity: z.number(), size: z.string(), sides: z.string(), paper: z.string(), finish: z.string(), amount: z.number() })).optional(),
+  payment: z.object({ status: z.string(), method: z.string() }).optional(),
+  deliveryDetails: z.object({ method: z.string(), estimate: z.string(), carrier: z.string().nullable(), tracking: z.string().nullable() }).optional(),
 });
 export type Design = z.infer<typeof designSchema>;
 export type Template = z.infer<typeof templateSchema>;

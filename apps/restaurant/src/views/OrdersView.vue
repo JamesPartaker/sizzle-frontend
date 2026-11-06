@@ -33,7 +33,7 @@ const inProduction = computed(() =>
     <div>
       <strong>A little something is in the works.</strong>
       <p>
-        Your autumn menus are in production. Estimated arrival: October 28–30.
+        {{ inProduction.name }} is in production.<span v-if="inProduction.delivery"> Estimated arrival: {{ inProduction.delivery }}.</span>
       </p>
     </div>
     <RouterLink class="text-link ml-auto" :to="`/orders/${inProduction.id}`"
@@ -49,8 +49,11 @@ const inProduction = computed(() =>
         aria-label="Search order number or design…" /></label
     ><select v-model="status" aria-label="Order status">
       <option>All orders</option>
+      <option>Pending</option>
       <option>In production</option>
+      <option>Shipped</option>
       <option>Delivered</option>
+      <option>Cancelled</option>
     </select>
   </div>
   <QueryState
@@ -71,11 +74,11 @@ const inProduction = computed(() =>
           >#{{ order.id }}<small>Print order</small></span
         ><span class="order-title"
           >{{ order.name
-          }}<small>{{ order.qty }} copies · A4 · Double-sided</small></span
+          }}<small>{{ order.qty }} copies</small></span
         ><span
           :class="['badge', { orange: order.status === 'In production' }]"
           >{{ order.status }}</span
-        ><span class="muted">{{ order.date }}</span
+        ><span class="muted">{{ new Date(order.date).toLocaleDateString() }}</span
         ><span>{{ money(order.total) }} CAD</span><AppIcon name="chevron"
       /></RouterLink>
       <div v-if="!filtered.length" class="empty">No matching orders.</div>

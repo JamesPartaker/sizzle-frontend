@@ -1,7 +1,8 @@
+import { apiOrigin } from "./api-origin";
 import { createGoApiClient } from "@sizzle/api-client";
 
-// Explicitly opt into server auth independently of the workspace data adapter.
-export const isLiveAuth = import.meta.env.VITE_AUTH_SOURCE === "api";
+// Cookie-session authentication defaults to live; demo remains an explicit option.
+export const isLiveAuth = (import.meta.env.VITE_AUTH_SOURCE || import.meta.env.VITE_DATA_SOURCE || "api") !== "demo";
 export const authApi = createGoApiClient(
-  import.meta.env.VITE_AUTH_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || window.location.origin,
+  import.meta.env.VITE_AUTH_API_BASE_URL || apiOrigin,
 );

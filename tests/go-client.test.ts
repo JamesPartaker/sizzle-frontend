@@ -9,7 +9,7 @@ it("matches the current Go create response and PUT update route", async () => {
     credentials?: RequestCredentials;
   }[] = [];
   const client = createGoApiClient(
-    "http://localhost:8080",
+    "http://localhost:1323",
     async (url, init) => {
       calls.push({
         path: String(url),
@@ -30,12 +30,12 @@ it("matches the current Go create response and PUT update route", async () => {
     Description: "",
   });
   expect(calls[0]).toMatchObject({
-    path: "http://localhost:8080/api/v1/designs",
+    path: "http://localhost:1323/api/v1/designs",
     method: "POST",
     credentials: "include",
   });
   expect(calls[1]).toMatchObject({
-    path: "http://localhost:8080/api/v1/designs/abc123",
+    path: "http://localhost:1323/api/v1/designs/abc123",
     method: "PUT",
   });
   expect(JSON.parse(calls[1].body!)).toEqual({
@@ -45,7 +45,7 @@ it("matches the current Go create response and PUT update route", async () => {
 });
 it("handles Go list responses with a null assets array", async () => {
   const client = createGoApiClient(
-    "http://localhost:8080",
+    "http://localhost:1323",
     async () => new Response(JSON.stringify({ assets: null }), { status: 200 }),
   );
   expect(await client.assets.list()).toEqual([]);

@@ -1,4 +1,6 @@
 import { useRouter } from "vue-router";
+import { editorOrigin } from "../api-origin";
+import { isDemo } from "../api";
 import type { Design, Template } from "@sizzle/schemas";
 import { useWorkspaceStore } from "../stores/workspace";
 import { useWorkspaceData } from "./useWorkspaceData";
@@ -7,9 +9,9 @@ export function useDesignActions() {
   const data = useWorkspaceData();
   const router = useRouter();
   function openDesign(design: Design) {
-    if (import.meta.env.VITE_EDITOR_URL) {
+    if (!isDemo || import.meta.env.VITE_EDITOR_URL) {
       const url = new URL(
-        import.meta.env.VITE_EDITOR_URL,
+        editorOrigin,
         window.location.origin,
       );
       url.searchParams.set("documentId", design.id);

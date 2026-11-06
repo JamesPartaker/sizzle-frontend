@@ -1,3 +1,6 @@
+import { isLiveAuth } from "./auth";
+import { GoApiError } from "@sizzle/api-client";
+import { useWorkspaceStore } from "./stores/workspace";
 import { createRouter, createWebHistory } from "vue-router";
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,4 +54,13 @@ export const router = createRouter({
 });
 router.afterEach((to) => {
   document.title = `${to.meta.title || "Workspace"} — Sizzle Studio`;
+});
+
+router.beforeEach(async (to) => {
+  if (!isLiveAuth || to.meta.authPage) return;
+  try { await useWorkspaceStore().loadProfile(); }
+  catch (error) {
+    if (error instanceof GoApiError && error.status === 401) return { name: "login" };
+    return { name: "login", query: { error: "profile" } };
+  }
 });

@@ -31,7 +31,7 @@ export interface SizzleClient {
     list(): Promise<BrandAsset[]>;
     upload(input: NewAsset): Promise<BrandAsset>;
   };
-  orders: { list(): Promise<PrintOrder[]> };
+  orders: { list(): Promise<PrintOrder[]>; get(id: string): Promise<PrintOrder | null> };
 }
 export class ApiError extends Error {
   constructor(
@@ -98,6 +98,7 @@ export function createHttpClient(
     },
     orders: {
       list: async () => orderSchema.array().parse(await request("/orders")),
+      get: async (id) => orderSchema.parse(await request(`/orders/${encodeURIComponent(id)}`)),
     },
   };
 }
@@ -187,7 +188,10 @@ export function createDemoClient(storage: StorageAdapter): SizzleClient {
         return asset;
       },
     },
-    orders: { list: async () => structuredClone(fixtures.orders) },
+    orders: {
+      list: async () => structuredClone(fixtures.orders),
+      get: async (id) => structuredClone(fixtures.orders.find(o => o.id === id) || null),
+    },
   };
 }
 export {

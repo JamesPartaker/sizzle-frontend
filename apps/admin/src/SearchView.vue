@@ -15,7 +15,6 @@ const money = (value: number) => new Intl.NumberFormat("en-CA", { style: "curren
 </script>
 <template>
   <PageHeading eyebrow="THE SIZZLE ADMINISTRATION" :title="titles[kind]" :description="descriptions[kind]" />
-  <p class="admin-demo-note">Demo data · Changes last for this session.</p>
   <div class="toolbar admin-toolbar">
     <label class="search"><AppIcon name="search" /><input v-model="search" type="search" :placeholder="`Search ${kind} by name, ID${kind === 'templates' ? ' or type' : ', email or restaurant'}…`" :aria-label="`Search ${kind}`" /></label>
     <select v-model="status" aria-label="Filter by status"><option value="">All statuses</option><option v-for="s in statuses[kind]" :key="s">{{ s }}</option></select>

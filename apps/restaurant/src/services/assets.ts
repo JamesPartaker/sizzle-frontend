@@ -4,6 +4,8 @@ import { assetContentType, validateUpload } from "@sizzle/utils";
 
 export interface AssetService {
   list(): Promise<BrandAsset[]>;
+  remove?(id: string): Promise<void>;
+  storage?(): Promise<{ limit_bytes: number; used_bytes: number; reserved_bytes: number }>;
   upload(file: File): Promise<BrandAsset | GoAsset>;
 }
 
@@ -13,6 +15,8 @@ export function createPrivateAssetService(
 ): AssetService {
   const go = createGoApiClient(origin, fetcher);
   return {
+    remove: go.assets.remove,
+    storage: go.assets.storage,
     async list() {
       const assets = await go.assets.list();
       return Promise.all(assets.filter((asset) => asset.state === "ready").map(async (asset) => ({

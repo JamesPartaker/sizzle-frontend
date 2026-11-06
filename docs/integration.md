@@ -1,87 +1,61 @@
-# Integration contracts
+# Go API integration
 
-## Current Go API
+The restaurant and admin workspaces use `sizzle-go-api` by default. API failures are shown to the user; they never fall back to fixtures. The restaurant's optional demo mode requires `VITE_DATA_SOURCE=demo` and `VITE_AUTH_SOURCE=demo`.
 
-`createGoApiClient(origin)` in `packages/api-client/src/go-api.ts` is based on the local `sizzle-go-api` controllers inspected during export. It uses cookie credentials and runtime Zod validation.
+## Local configuration
 
-```ts
-import { createGoApiClient } from "@sizzle/api-client";
-const go = createGoApiClient("http://localhost:8080");
-const profile = await go.me();
-const designs = await go.designs.list();
-const created = await go.designs.create({ Name: "Dinner", Description: "" });
-await go.designs.update(created.designId, {
-  Name: "Autumn dinner",
-  Description: "",
-});
-```
+Run Go on port 1323, the restaurant on 4173, admin on 4174, and the editor on 1234. Use the same hostname throughout (for example `localhost`) so the browser shares the API session consistently. Configure the Go server's credentialed CORS allowlist for every frontend/editor origin. Private storage also needs signed-PUT CORS; see the API's `docs/private-assets.md`.
 
-Supported current endpoints:
-
-| Operation               | Go endpoint                         |
-| ----------------------- | ----------------------------------- |
-| Current user            | `GET /api/v1/me`                    |
-| List/create designs     | `GET/POST /api/v1/designs`          |
-| Read design             | `GET /api/v1/design/:id` (singular) |
-| Update design metadata  | `PUT /api/v1/designs/:id`           |
-| Soft-delete design      | `DELETE /api/v1/designs/:id`        |
-| Save editor document    | `POST /api/v1/designs/:id/document` |
-| List/start asset upload | `GET/POST /api/v1/assets`           |
-| Complete upload         | `POST /api/v1/assets/:id/complete`  |
-| Signed download URL     | `GET /api/v1/assets/:id/download`   |
-| Delete asset            | `DELETE /api/v1/assets/:id`         |
-| Storage usage           | `GET /api/v1/assets/storage`        |
-
-The restaurant asset page is connected to these Go endpoints through `createPrivateAssetService`. To enable it, add these settings to `apps/restaurant/.env.local` and restart Vite:
+Copy each app's `.env.example` to `.env.local` to override deployment settings:
 
 ```dotenv
-VITE_DATA_SOURCE=demo
-VITE_ASSET_SOURCE=api
-VITE_API_BASE_URL=http://localhost:8080
-VITE_AUTH_SOURCE=api
+VITE_API_BASE_URL=http://localhost:1323
+VITE_EDITOR_URL=http://localhost:1234
 ```
 
-This connects assets and login to Go while retaining the other workspace prototypes. `VITE_ASSET_API_BASE_URL` optionally overrides the Go origin for assets. If `VITE_ASSET_SOURCE` is blank, it follows `VITE_DATA_SOURCE`; setting it explicitly to `demo` uses browser-local assets.
+Development defaults to those addresses. Production defaults to the current origin for API calls and `/editor/` for editor navigation; configure explicit origins when deploying separately. Set `SIZZLE_API_ORIGIN` in the editor build when its API lives elsewhere. The editor also defaults local development hostnames to API port 1323.
 
-Uploads reserve metadata with `POST /api/v1/assets`, PUT the raw File to the signed storage URL, then call `/complete`. The browser sets Host and Content-Length; other returned signed headers are preserved. API requests include session cookies; storage uploads omit credentials. Failed PUT/completion attempts make a best-effort DELETE to release the pending storage reservation. Quota, authentication, and verification failures appear in the upload notification.
+Restaurant data, assets and auth can be selected independently with `VITE_DATA_SOURCE`, `VITE_ASSET_SOURCE`, and `VITE_AUTH_SOURCE`. Optional asset/auth origin overrides remain supported. All API calls include session cookies; direct signed storage uploads omit credentials.
 
-The page accepts PNG, JPEG, GIF, TTF, and OTF files, up to 20 MiB each. MIME types are derived from the supported file extension, including fonts whose browser MIME type is empty or varies; the Go server verifies actual content. SVG and WebP are rejected. Listing shows ready assets only and maps server metadata to image/font cards. Pending uploads are excluded. Image previews request signed download URLs, refresh every four minutes while the page is active, and refetch on focus/remount. Signed URLs stay in memory and are never stored in localStorage. Font cards display metadata without requesting image previews.
+## Authentication and profile
 
-The Go server and private bucket must be configured as described in `sizzle-go-api/docs/private-assets.md`. The API needs credentialed CORS for the frontend origin and the bucket needs CORS for signed PUT requests. Run `VITE_ASSET_SOURCE=api pnpm test:e2e tests/e2e/assets-api.spec.ts` for mocked desktop/mobile upload, preview, reload, and quota checks.
+Password login and registration POST `{emailAddress,password}` to `/login` and `/register`. Protected restaurant navigation loads `/api/v1/me`, redirects expired sessions to `/login`, and populates the restaurant and owner profile from the response. The Go endpoint reads the current active database user and workspace, returning `UserId`, `EmailAddress`, `WorkspaceId`, `Role`, `Name`, `Restaurant`, and `Status`. It never uses cached profile fields from the session as the response.
 
-The current Go server does not expose the template listing, print orders, duplicate, or undo/restore endpoints used by this prototype. Its design DTOs also do not directly contain the template preview metadata shown here. Those need an explicit mapping and backend implementation. Assets use the Go integration above; the other workspace resources still require those adapters.
+Sign out POSTs `/logout`, which returns 204, and clears the frontend query cache and profile. Google sign-in is intentionally unconfigured; the button shows an availability message. Password recovery and AI prompt/chat are not connected.
 
-## UI data service
+## Restaurant workspace
 
-The frontend consumes `SizzleClient`, a typed interface with designs/templates/assets/orders. `createDemoClient` implements it with browser storage. Existing prototype localStorage keys are retained for migration: `sizzle-docs` and `sizzle-assets`. In demo mode, uploaded image data remains in the current browser only. Live assets use the Go service independently.
+`createGoWorkspaceClient` maps the Go DTOs to the UI models. It uses:
 
-`createHttpClient` is an optional frontend-facing REST contract, not the existing Go adapter. `VITE_DATA_SOURCE=api` selects this contract for designs, templates, and orders; assets use the Go service. Its base URL must point at a service/adapter that implements the following shape:
+- Design list/create: `GET/POST /api/v1/designs`.
+- Read: `GET /api/v1/design/:id` (singular).
+- Metadata: `PUT /api/v1/designs/:id`.
+- Soft delete, duplicate and restore: `DELETE /api/v1/designs/:id`, `POST /api/v1/designs/:id/duplicate`, `POST /api/v1/designs/:id/restore`.
+- Catalogue: `GET /api/v1/templates`; cards use revision thumbnail endpoints.
+- Customer history: `GET /api/v1/orders`.
+- Customer detail: `GET /api/v1/orders/:id`; direct links fetch the selected order independently of the history query.
 
-| Method | Relative URL             | Body / result                           |
-| ------ | ------------------------ | --------------------------------------- |
-| GET    | `/designs`               | `Design[]`                              |
-| POST   | `/designs`               | `NewDesign` → `Design`                  |
-| PATCH  | `/designs/:id`           | `{ name }` → `Design`                   |
-| POST   | `/designs/:id/duplicate` | → `Design`                              |
-| DELETE | `/designs/:id`           | → 204                                   |
-| POST   | `/designs/:id/restore`   | deleted `Design` → `Design`             |
-| GET    | `/templates`             | `Template[]`                            |
-| GET    | `/orders`                | `PrintOrder[]`                          |
+Order status supports Pending, In production, Shipped, Delivered and Cancelled. Totals, tax, shipping, item specifications, addresses, payment status and tracking come from the stored order snapshot. Missing financial breakdowns remain absent rather than being calculated in the browser. Order creation, checkout and payment collection are outside this integration.
 
-The Zod definitions in `packages/schemas` are the source of truth for these frontend models. The standalone `createHttpClient` retains its legacy `/assets` contract for external adapters, but the restaurant app routes asset operations through its separate asset service. Use server-owned prices, order state, and delivery details; demo calculations are presentation examples.
+Assets use their dedicated private upload service: reserve via `POST /api/v1/assets`, PUT the file to the signed URL, then POST `/api/v1/assets/:id/complete`. Lists, signed previews, deletion and workspace storage usage use the existing Go endpoints. Failed uploads attempt reservation cleanup. Previews are refreshed and signed URLs are never persisted locally.
 
-## Authentication and routing
+## Administration
 
-The restaurant app provides `/login` and `/register` outside the workspace layout. By default these pages explain demo mode and provide an explicit link to explore the demo workspace; submitting credentials does not create a fake session or store a password.
+`apps/admin/src/data.ts` implements `AdminRepository` using `/api/v1/admin`. It contains no demo records. Searches for users, templates, designs and orders send `q`, `status`, `page`, `limit`, and `sort`, forwarding cancellation signals and consuming `{items,totalItems}`. Detail pages request `/:kind/:id`; 404 becomes the missing-record state, while permission and server failures remain errors.
 
-Set `VITE_AUTH_SOURCE=api` to enable the Go server's cookie-based authentication. Set `VITE_AUTH_API_BASE_URL` to the Go server origin (falls back to `VITE_API_BASE_URL`, then the frontend origin). `createGoApiClient().auth.login` and `.auth.register` POST `{ emailAddress, password }` to `/login` and `/register`, accepting the server's empty 204 and 201 responses. Successful submission opens `/dashboard`; failures stay on the form. Google sign-in navigates to the Go server's `/login/google`. The Go OAuth callback currently redirects to `/` on the API origin; production routing must serve the frontend there or proxy these auth routes on the frontend origin. Separate origins also require the server's credentialed CORS and cookie configuration to allow the frontend.
+User edits PUT `/api/v1/admin/users/:id`. Order status changes PUT `/api/v1/admin/orders/:id/status`. Both refresh the affected search and detail queries after persistence. The server checks current database admin permissions on every request. Sign in through the restaurant app using an admin account; both applications call the same cookie-session API origin.
 
-The auth setting is independent of `VITE_DATA_SOURCE`; enabling authentication does not replace the workspace data adapter. Full name and persistent “remember me” are omitted because the current Go endpoint does not support them. Password reset presents an availability notice because the backend has no reset endpoint. Terms and privacy dialogs are provisional launch copy.
+## Editor
 
-Workspace routes remain accessible for the existing demo; this change does not introduce authorization guards or claim that the Pinia demo profile is the authenticated user. Before production, connect the workspace profile to `/api/v1/me`, enforce session checks and server ownership checks, and replace demo data with the intended API adapter. No admin routes or permissions are changed.
+Design navigation opens `?documentId=<UUID>`; admin template navigation uses `?templateId=<UUID>`. API-mode load, revision-aware autosave, save-as-copy, immutable resource resolution, workspace assets and template library publication already use Go. Saves send `{Document,DocumentVersion:1,revision}` and receive `{revision,document}`. Revision conflicts pause autosave and support reload or saving a copy. Local editing without an ID remains available.
 
-Run `pnpm test:e2e tests/e2e/auth.spec.ts` for demo-page checks and `VITE_AUTH_SOURCE=api pnpm test:e2e tests/e2e/auth-api.spec.ts` for mocked Go sign-in and registration checks. API-mode tests start an isolated server on port 4179 so they do not reuse a running demo server.
+PDF rendering is unchanged. AI editing and prepared asset variations remain local demo functionality.
 
-## Shared packages
+## Checks
 
-Packages export TypeScript and Vue source; Vite compiles them directly in this workspace. They are private workspace packages, not prebuilt npm distributions. The empty admin app can later consume the same packages without duplicating the restaurant interface.
+- `pnpm test`, `pnpm typecheck`, `pnpm build`.
+- `VITE_DATA_SOURCE=api VITE_AUTH_SOURCE=api pnpm exec playwright test tests/e2e/workspace-api.spec.ts tests/e2e/auth-api.spec.ts`.
+- `VITE_ASSET_SOURCE=api pnpm exec playwright test tests/e2e/assets-api.spec.ts`.
+- `pnpm test:e2e:admin`.
+
+Browser integration tests intercept HTTP responses; Go integration tests separately exercise authorization and persistence against a disposable PostgreSQL database. Normal demo browser tests explicitly set demo mode through the Playwright configuration.

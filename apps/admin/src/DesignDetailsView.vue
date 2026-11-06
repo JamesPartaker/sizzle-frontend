@@ -14,7 +14,7 @@ const query = useQuery({
   queryFn: ({ signal }) => adminRepository.getDesign(id.value, signal),
 });
 const design = query.data;
-const editorUrl = computed(() => design.value ? designEditorUrl(import.meta.env.VITE_EDITOR_URL, design.value.documentId, window.location.origin) : null);
+const editorUrl = computed(() => design.value ? designEditorUrl(import.meta.env.VITE_EDITOR_URL || (import.meta.env.DEV ? "http://localhost:1234" : "/editor/"), design.value.documentId, window.location.origin) : null);
 const date = (value: string) => new Intl.DateTimeFormat("en-CA", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(value));
 </script>
 <template>
@@ -23,7 +23,6 @@ const date = (value: string) => new Intl.DateTimeFormat("en-CA", { dateStyle: "m
   <div v-else-if="query.isError.value" class="page-error" role="alert">Couldn’t load this design. <button class="btn" @click="query.refetch()">Try again</button></div>
   <template v-else-if="design">
     <PageHeading eyebrow="MADE IN THE CREATIVE KITCHEN" :title="design.name" :description="`${design.id} · ${design.owner.restaurant}`"><span :class="['badge', { orange: design.status === 'Draft', gray: design.status === 'Archived' }]">{{ design.status }}</span></PageHeading>
-    <p class="admin-demo-note">Demo design · Details are illustrative.</p>
     <div class="detail-grid admin-record-details">
       <div>
         <section class="panel"><h2>Design overview</h2><p class="admin-description">{{ design.description }}</p><dl class="admin-detail-list"><div><dt>Design ID</dt><dd>{{ design.id }}</dd></div><div><dt>Document ID</dt><dd>{{ design.documentId }}</dd></div><div><dt>Stationery type</dt><dd>{{ design.type }}</dd></div><div><dt>Status</dt><dd>{{ design.status }}</dd></div></dl></section>
