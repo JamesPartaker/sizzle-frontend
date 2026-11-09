@@ -141,7 +141,12 @@ export type CoverType = "binder" | "printed";
 export type CoverMaterial = "leather" | "linen" | "card";
 export type CoverDecoration = "none" | "print" | "foil" | "emboss";
 export type ProductionComponent =
-  | { kind: "paper"; name: string; stock: "uncoated" | "coated" | "recycled" }
+  | {
+      kind: "paper";
+      name: string;
+      stock: "uncoated" | "coated" | "recycled";
+      role?: "menu" | "inside-slip";
+    }
   | {
       kind: "cover";
       name: string;

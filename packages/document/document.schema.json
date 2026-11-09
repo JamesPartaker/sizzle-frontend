@@ -2076,6 +2076,12 @@
                       "coated",
                       "recycled"
                     ]
+                  },
+                  "role": {
+                    "enum": [
+                      "menu",
+                      "inside-slip"
+                    ]
                   }
                 },
                 "required": [

@@ -199,3 +199,15 @@ test("optional cover surfaces follow product capabilities and can be removed ind
   addCoverSurface(doc, front.componentId, "inside-front");
   validate(doc);
 });
+
+test("paper groups persist an optional menu or inside-slip role", () => {
+  const doc = ensureProduction(emptyDocument());
+  doc.production.components.paper_main.role = "inside-slip";
+  validate(doc);
+  assert.equal(
+    JSON.parse(JSON.stringify(doc)).production.components.paper_main.role,
+    "inside-slip",
+  );
+  doc.production.components.paper_main.role = "other";
+  assert.throws(() => validate(doc));
+});

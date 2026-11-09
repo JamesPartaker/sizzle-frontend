@@ -94,3 +94,10 @@ and whether that page participates in template reflow. Reflow replaces template
 artwork for the active purpose, preserving cover surfaces, other purposes,
 independent artwork, stock, page dimensions, guides and backgrounds. Duplicated
 pages become independent artwork so later content edits cannot overwrite them.
+
+Paper components optionally record `role: "menu" | "inside-slip"`; an absent role
+means menu paper. This is independent of content purpose (dinner/drinks/table),
+stock and size. The editor bottom bar derives All/Cover/Menu/Inside slip filters
+from the pages actually present. These are view-only: hidden surfaces remain in
+the saved document and exports. The selected filter lives in the namespaced
+editor session extension, with All as the fallback when a category disappears.
