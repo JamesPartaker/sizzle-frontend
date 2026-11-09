@@ -135,7 +135,88 @@ export type DocumentNode = NodeBase &
     | { type: "image"; resourceId: string; crop: RectBox }
     | { type: "text"; text: DocumentText }
   );
+export type CoverSurfaceRole =
+  "front" | "back" | "spine" | "inside-front" | "inside-back";
+export type CoverType = "binder" | "printed";
+export type CoverMaterial = "leather" | "linen" | "card";
+export type CoverDecoration = "none" | "print" | "foil" | "emboss";
+export type ProductionComponent =
+  | { kind: "paper"; name: string; stock: "uncoated" | "coated" | "recycled" }
+  | {
+      kind: "cover";
+      name: string;
+      type: CoverType;
+      material: CoverMaterial;
+      materialColor: string;
+      decoration: CoverDecoration;
+      decorationColor: string;
+    };
+export interface Production {
+  version: 1;
+  components: Record<string, ProductionComponent>;
+}
+export interface ExportSelection {
+  part?: "all" | "cover" | "paper";
+  componentId?: string;
+  pageId?: string;
+}
+export const COVER_TYPES: Record<
+  CoverType,
+  {
+    materials: CoverMaterial[];
+    decorations: CoverDecoration[];
+    surfaces: CoverSurfaceRole[];
+  }
+>;
+export function ensureProduction<T extends DocumentContent>(
+  doc: T,
+): T & { production: Production };
+export function pageComponent(
+  doc: DocumentContent,
+  page: DocumentPage,
+): ProductionComponent | undefined;
+export function menuPages(doc: DocumentContent, format: string): DocumentPage[];
+export function addPaperPage(
+  doc: DocumentContent,
+  options?: {
+    componentId?: string;
+    name?: string;
+    width?: number;
+    height?: number;
+    format?: string;
+  },
+): DocumentPage;
+export function addCover(doc: DocumentContent, type?: CoverType): DocumentPage;
+export function addCoverSurface(
+  doc: DocumentContent,
+  componentId: string,
+  surfaceRole: CoverSurfaceRole,
+): DocumentPage;
+export function removePage(doc: DocumentContent, pageId: string): void;
+export function removeCover(doc: DocumentContent): void;
+export function duplicatePage(
+  doc: DocumentContent,
+  pageId: string,
+): DocumentPage;
+export function setPageBackground(
+  doc: DocumentContent,
+  pageId: string,
+  background: string,
+): void;
+export function resizePage(
+  doc: DocumentContent,
+  pageId: string,
+  width: number,
+  height: number,
+): void;
+export function selectExportPages(
+  doc: DocumentContent,
+  options?: ExportSelection,
+): DocumentPage[];
+export function productionWarnings(doc: DocumentContent): string[];
 export interface DocumentPage {
+  componentId?: string;
+  surfaceRole?: "front" | "back" | "spine" | "inside-front" | "inside-back";
   id: string;
   name: string;
   width: number;
@@ -147,6 +228,7 @@ export interface DocumentPage {
   extensions: Extensions;
 }
 export interface DocumentContent {
+  production?: Production;
   format: "sizzle.document";
   version: 1;
   layoutStatus: "draft" | "ready";

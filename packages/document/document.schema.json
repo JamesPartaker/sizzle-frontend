@@ -62,6 +62,9 @@
     },
     "editorState": {
       "$ref": "#/$defs/editorState"
+    },
+    "production": {
+      "$ref": "#/$defs/production"
     }
   },
   "required": [
@@ -1396,6 +1399,18 @@
         },
         "extensions": {
           "$ref": "#/$defs/extensions"
+        },
+        "componentId": {
+          "$ref": "#/$defs/id"
+        },
+        "surfaceRole": {
+          "enum": [
+            "front",
+            "back",
+            "spine",
+            "inside-front",
+            "inside-back"
+          ]
         }
       },
       "required": [
@@ -1472,6 +1487,9 @@
         },
         "extensions": {
           "$ref": "#/$defs/extensions"
+        },
+        "production": {
+          "$ref": "#/$defs/production"
         }
       },
       "required": [
@@ -2023,6 +2041,107 @@
         "history",
         "preview",
         "extensions"
+      ],
+      "additionalProperties": false
+    },
+    "production": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "components": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 100,
+          "propertyNames": {
+            "$ref": "#/$defs/id"
+          },
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "const": "paper"
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "stock": {
+                    "enum": [
+                      "uncoated",
+                      "coated",
+                      "recycled"
+                    ]
+                  }
+                },
+                "required": [
+                  "kind",
+                  "name",
+                  "stock"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "const": "cover"
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "type": {
+                    "enum": [
+                      "binder",
+                      "printed"
+                    ]
+                  },
+                  "material": {
+                    "enum": [
+                      "leather",
+                      "linen",
+                      "card"
+                    ]
+                  },
+                  "materialColor": {
+                    "$ref": "#/$defs/color"
+                  },
+                  "decoration": {
+                    "enum": [
+                      "none",
+                      "print",
+                      "foil",
+                      "emboss"
+                    ]
+                  },
+                  "decorationColor": {
+                    "$ref": "#/$defs/color"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "name",
+                  "type",
+                  "material",
+                  "materialColor",
+                  "decoration",
+                  "decorationColor"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "version",
+        "components"
       ],
       "additionalProperties": false
     }

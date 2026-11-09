@@ -1,3 +1,4 @@
+import { COVER_TYPES } from "./production.mjs";
 import Ajv2020 from "ajv/dist/2020.js";
 import schema from "../document.schema.json" with { type: "json" };
 import { sha256 as digest } from "@noble/hashes/sha256";
@@ -132,6 +133,42 @@ function semantic(doc, path = "$") {
   const pageIds = doc.pages.map((p) => p.id);
   if (new Set(pageIds).size !== pageIds.length)
     fail(path, "duplicate page IDs");
+  if (doc.production) {
+    const components = doc.production.components;
+    let covers = 0;
+    for (const [id, component] of Object.entries(components)) {
+      const pages = doc.pages.filter((p) => p.componentId === id);
+      if (!pages.length) fail(path, `component ${id} has no surfaces`);
+      if (component.kind === "cover") {
+        covers++;
+        const capabilities = COVER_TYPES[component.type];
+        if (
+          !capabilities.materials.includes(component.material) ||
+          !capabilities.decorations.includes(component.decoration)
+        )
+          fail(path, "unsupported cover options");
+        const roles = pages.map((p) => p.surfaceRole);
+        if (roles.some((role) => !capabilities.surfaces.includes(role)))
+          fail(path, "unsupported cover surface");
+        if (
+          !roles.includes("front") ||
+          !roles.includes("back") ||
+          new Set(roles).size !== roles.length ||
+          roles.includes(undefined)
+        )
+          fail(path, "cover requires unique front and back surfaces");
+      } else if (pages.some((p) => p.surfaceRole))
+        fail(path, "paper cannot have cover surface roles");
+    }
+    if (covers > 1) fail(path, "a menu supports one cover");
+    for (const page of doc.pages) {
+      if (!Object.hasOwn(components, page.componentId || ""))
+        fail(path, "page component missing");
+    }
+    if (!Object.values(components).some((c) => c.kind === "paper"))
+      fail(path, "menu requires paper pages");
+  } else if (doc.pages.some((p) => p.componentId || p.surfaceRole))
+    fail(path, "production metadata missing");
   const assigned = new Set();
   const image = (id, p) => {
     const res = Object.hasOwn(doc.resources, id)

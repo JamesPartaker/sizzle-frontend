@@ -1,3 +1,19 @@
+export {
+  COVER_TYPES,
+  ensureProduction,
+  pageComponent,
+  menuPages,
+  addPaperPage,
+  addCover,
+  addCoverSurface,
+  removePage,
+  removeCover,
+  duplicatePage,
+  resizePage,
+  setPageBackground,
+  selectExportPages,
+  productionWarnings,
+} from "./production.mjs";
 import { Buffer } from "buffer";
 import svgpath from "svgpath";
 import { expandCheckpoint } from "./history.mjs";

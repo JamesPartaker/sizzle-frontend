@@ -48,3 +48,49 @@ Budgets are deliberate: 10 MiB checkpoint, 64 MiB resolved resources, bounded sh
 This directory in `sizzle-frontend` is canonical. After editing shared code/schema/assets, run `node scripts/sync-document.mjs` from that repository. It copies the package into the editor's `vendor/document` and API's `renderer/document`, generates editor resource URLs and embeds the library manifest/bytes in Go. Commit all copies together. Each is a real pnpm workspace package, so installations and deployments do not depend on adjacent checkouts. The sync script rejects changes/removal of immutable library resource IDs; add a new filename for new bytes.
 
 Checks: `node --test packages/document/test/*.test.mjs`; API renderer `pnpm test`; built adjacent editor `pnpm test:editor` from `sizzle-go-api/renderer`. Browser tests cover local and remote codecs, geometry, typography, pages, undo/redo, exact session restoration and shared vector output. API HTTP integration tests use a disposable PostgreSQL database and retained object storage adapter.
+
+## Menu components and mixed-size surfaces
+
+The optional, independently versioned `production: {version: 1, components: {...}}`
+adds physical product intent to the version-1 fixed-layout document. It does not
+change `sizzle.fixed/1.0.0` rendering: every page still owns its physical point
+size, print background, bleed, safe guides and artwork. Existing documents
+without production metadata remain valid. Older validators reject the new
+fields explicitly; deploy the synchronized shared package to the editor and API
+together before saving component documents. No PostgreSQL schema change is needed.
+
+A component is either a paper group (`name`, `stock`) or a cover (`name`, `type`,
+`material`, `materialColor`, `decoration`, `decorationColor`). Pages reference
+`componentId`; cover surfaces additionally have a unique `surfaceRole` and must
+include front and back. A menu has at most one cover and at least one paper
+component. Stock belongs to the paper group, while size/background belong to each
+page. Different-sized pages can use the same stock. `COVER_TYPES` defines the
+initial supported combinations; these are generic editor choices, not a supplier
+catalogue, pricing model or manufacturing approval.
+
+Call `ensureProduction` only on expanded content. The editor expands compact
+history before migrating the current scene, retained history and previews. Legacy
+pages become one uncoated paper group, retaining artwork and dimensions. Legacy
+menu section assignments gain stable page IDs. Production settings participate
+in the same save, revisions, history deltas and resource retention as artwork.
+
+Material colour is a canvas preview behind the printable page background. Binder
+surfaces start with a transparent print background. SVG/PDF output includes only
+fixed artwork, never a simulated material texture or automatically generated foil
+or emboss separations. A decoration colour may be used when adding cover text;
+subsequent finishing changes do not recolour existing artwork. Supplier-specific
+dielines, decoration plates and physical sheet/front-back imposition require a
+future manufacturing integration. A design page is a surface, not an implied
+physical sheet.
+
+`selectExportPages(document, {part: "all" | "cover" | "paper", componentId?,
+pageId?})` filters artwork without mutating it and fails if nothing matches. The
+PDF endpoints accept `part` and `componentId` query parameters. Page order and
+mixed TrimBox/BleedBox dimensions are preserved. Local printing uses named CSS
+page sizes; server PDF export is the authoritative production geometry.
+
+The editor's namespaced page recipe `com.sizzle.menu` records the content purpose
+and whether that page participates in template reflow. Reflow replaces template
+artwork for the active purpose, preserving cover surfaces, other purposes,
+independent artwork, stock, page dimensions, guides and backgrounds. Duplicated
+pages become independent artwork so later content edits cannot overwrite them.
