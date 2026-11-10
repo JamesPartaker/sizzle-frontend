@@ -94,3 +94,13 @@ Google Fonts are loaded as in the original design (DM Sans and DM Serif Display)
 With `VITE_DATA_SOURCE=api`, the restaurant workspace now uses the Go `/api/v1/designs` and `/api/v1/templates` contracts. Template selection creates an independent design snapshot on the server. Lists display revision-specific authenticated thumbnails. `VITE_EDITOR_URL` passes `documentId` from designs and `templateId` from admin templates. Configure credentialed API CORS and sign in before opening another origin. API PDF/thumbnail rendering requires the Node/Chromium worker documented in `sizzle-go-api/renderer/README.md`.
 
 Browser demo mode remains available when `VITE_DATA_SOURCE` is not `api`. Its illustrative template previews are separate from real revision thumbnails. Existing order-service integration is unchanged.
+
+## Shared print orders
+
+Open **Your order** at `/order`, or choose **Add to order** from My designs, a recent design card, or the editor. Each document's covers and menu pages have independent quantities. Saved artwork versions and production specifications remain pinned until the user explicitly updates them. Drafts are shared across the active workspace and persist on the server.
+
+Checkout collects delivery/contact and billing information, then requires artwork approval. Submission creates a Pending order for manual quote approval and invoicing; prices remain **Awaiting quote** and no payment is taken. Print orders contains history, ordered-artwork previews and a reorder action that uses current saved artwork. Admin order details show production specifications and exact ordered artwork. Demo designs cannot be submitted for production.
+
+Apply the updated pre-production API schema with the existing reset/create workflow before running the new flow. Set `SIZZLE_FRONTEND_ORIGIN` for the editor when it is hosted separately. Customer document print/PDF/SVG/JSON export controls and PDF API routes have been removed.
+
+Run `VITE_DATA_SOURCE=api VITE_AUTH_SOURCE=api pnpm exec playwright test tests/e2e/ordering.spec.ts` to test desktop and mobile checkout with mocked API responses. With a built editor served locally, also set `SIZZLE_EDITOR_TEST_URL=http://127.0.0.1:1239` and run `tests/e2e/editor-ordering.spec.ts` to verify saving before adding and export removal.

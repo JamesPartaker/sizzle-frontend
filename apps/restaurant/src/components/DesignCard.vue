@@ -4,7 +4,7 @@ import { previewColors, timeAgo } from "@sizzle/utils";
 import type { Design, Template } from "@sizzle/schemas";
 import { useDesignActions } from "../composables/useDesignActions";
 defineProps<{ design: Design; template?: Template }>();
-const { ui, openDesign, duplicate } = useDesignActions();
+const { ui, openDesign, duplicate, addToOrder } = useDesignActions();
 </script>
 <template>
   <article class="design-card">
@@ -39,6 +39,7 @@ const { ui, openDesign, duplicate } = useDesignActions();
         @delete="ui.deleteDesign = design"
       />
     </div>
+    <button class="btn" style="margin:0 16px 16px" @click="addToOrder(design)">Add to order <AppIcon name="plus" /></button>
   </article>
 </template>
 <style scoped>.document-thumbnail{display:block;width:100%;height:100%;object-fit:contain}</style>

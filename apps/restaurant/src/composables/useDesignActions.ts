@@ -38,5 +38,13 @@ export function useDesignActions() {
   function duplicate(design: Design) {
     data.duplicate.mutate(design.id);
   }
-  return { ui, data, openDesign, useTemplate, duplicate };
+  function addToOrder(design: Design) {
+    if (!isDemo && !design.revision) {
+      ui.notify("Open and save this design in the editor before adding it to your order.");
+      return;
+    }
+    ui.previewDesign = null;
+    void router.push({ path: "/order", query: { design: design.id } });
+  }
+  return { ui, data, openDesign, useTemplate, duplicate, addToOrder };
 }

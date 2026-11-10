@@ -4,7 +4,7 @@ import { useForm, useField } from "vee-validate";
 import { designNameSchema } from "@sizzle/schemas";
 import { AppDialog, AppIcon, MenuPreview } from "@sizzle/ui";
 import { useDesignActions } from "../composables/useDesignActions";
-const { ui, data, useTemplate } = useDesignActions();
+const { ui, data, useTemplate, addToOrder } = useDesignActions();
 const { handleSubmit, resetForm } = useForm<{ name: string }>();
 const { value: name, errorMessage } = useField<string>("name", (value) => {
   const result = designNameSchema.safeParse(value);
@@ -109,7 +109,8 @@ async function confirmDelete() {
         ><span>{{ ui.previewDesign?.status }}</span>
       </div>
       <div class="modal-actions">
-        <button class="btn primary" @click="ui.previewDesign = null">
+        <button class="btn primary" @click="ui.previewDesign && addToOrder(ui.previewDesign)">Add to order <AppIcon name="plus" /></button>
+        <button class="btn" @click="ui.previewDesign = null">
           Done <AppIcon name="check" />
         </button>
       </div>
@@ -175,8 +176,9 @@ async function confirmDelete() {
       assets.
     </p>
     <p>
-      <strong>Print orders</strong><br />Open an order to see its progress and
-      print specifications. Orders in the demo are examples.
+      <strong>Print orders</strong><br />Add saved designs to Your order, choose quantities for each part, and
+      submit through checkout for approval and invoicing. Open Print orders to
+      see submitted orders and their progress. Demo orders are examples.
     </p>
     <div class="modal-actions">
       <button class="btn primary" @click="ui.helpOpen = false">Got it</button>

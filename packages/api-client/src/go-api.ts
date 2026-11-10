@@ -36,11 +36,11 @@ export const goAssetSchema = z.object({
   created_at: z.string(),
 });
 export const goOrderSchema = z.object({
-  id: z.string(), name: z.string(), quantity: z.number(), total: z.number(),
+  id: z.string(), name: z.string(), quantity: z.number(), total: z.number().nullable(),
   status: z.enum(["Pending", "In production", "Shipped", "Delivered", "Cancelled"]),
   placedAt: z.string(), updatedAt: z.string(), customerName: z.string(),
   shippingAddress: z.array(z.string()), billingAddress: z.array(z.string()),
-  items: z.array(z.object({ designId: z.string().optional(), name: z.string(), quantity: z.number(), size: z.string(), sides: z.string(), paper: z.string(), finish: z.string(), amount: z.number() })),
+  items: z.array(z.object({ id: z.string().optional(), designId: z.string().optional(), designName: z.string().optional(), revision: z.number().optional(), unit: z.string().optional(), pageIds: z.array(z.string()).optional(), production: z.record(z.string(),z.unknown()).optional(), name: z.string(), quantity: z.number(), size: z.string(), sides: z.string(), paper: z.string(), finish: z.string(), amount: z.number().nullable() })),
   subtotal: z.number().nullable(), shipping: z.number().nullable(), tax: z.number().nullable(),
   payment: z.object({ status: z.string(), method: z.string() }),
   delivery: z.object({ method: z.string(), estimate: z.string(), carrier: z.string().nullable(), tracking: z.string().nullable() }),
@@ -180,12 +180,6 @@ export function createGoApiClient(
           "POST",
           { revision },
         ),
-      pdfUrl: (
-        id: string,
-        revision: number,
-        view: "committed" | "preview" = "committed",
-      ) =>
-        `${origin.replace(/\/$/, "")}/api/v1/designs/${encodeURIComponent(id)}/revisions/${revision}/pdf?view=${view}`,
       thumbnailUrl: (id: string, revision: number, pageId?: string) =>
         `${origin.replace(/\/$/, "")}/api/v1/designs/${encodeURIComponent(id)}/revisions/${revision}/thumbnail${pageId ? "?pageId=" + encodeURIComponent(pageId) : ""}`,
     },

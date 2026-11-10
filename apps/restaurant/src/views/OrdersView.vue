@@ -25,8 +25,8 @@ const inProduction = computed(() =>
     eyebrow="FROM SCREEN TO TABLE"
     title="Fresh off the press."
     description="Keep an eye on the good things making their way to you."
-    ><RouterLink class="btn" to="/designs"
-      >Browse your designs <AppIcon name="arrow" /></RouterLink
+    ><RouterLink class="btn primary" to="/order"
+      >Your order <AppIcon name="arrow" /></RouterLink
   ></PageHeading>
   <div v-if="inProduction" class="order-banner">
     <AppIcon name="box" />
@@ -74,12 +74,12 @@ const inProduction = computed(() =>
           >#{{ order.id }}<small>Print order</small></span
         ><span class="order-title"
           >{{ order.name
-          }}<small>{{ order.qty }} copies</small></span
+          }}<small>{{ order.items?.length || 1 }} parts · {{ order.qty }} units</small></span
         ><span
           :class="['badge', { orange: order.status === 'In production' }]"
           >{{ order.status }}</span
         ><span class="muted">{{ new Date(order.date).toLocaleDateString() }}</span
-        ><span>{{ money(order.total) }} CAD</span><AppIcon name="chevron"
+        ><span>{{ order.total == null ? 'Awaiting quote' : `${money(order.total)} CAD` }}</span><AppIcon name="chevron"
       /></RouterLink>
       <div v-if="!filtered.length" class="empty">No matching orders.</div>
     </div></QueryState

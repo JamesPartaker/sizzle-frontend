@@ -14,7 +14,7 @@ import { useDesignActions } from "../composables/useDesignActions";
 import PageHeading from "../components/PageHeading.vue";
 import PageFooter from "../components/PageFooter.vue";
 import QueryState from "../components/QueryState.vue";
-const { ui, data, openDesign, duplicate } = useDesignActions();
+const { ui, data, openDesign, duplicate, addToOrder } = useDesignActions();
 const search = ref("");
 const sort = ref("newest");
 const sorting = computed<SortingState>(() => [
@@ -76,7 +76,7 @@ const template = (id: string) =>
     ><div class="results-meta">
       {{ table.getRowModel().rows.length }} designs in your workspace
     </div>
-    <div class="rows">
+    <div class="rows designs-list">
       <div class="table-head">
         <span>Design name</span><span>Stationery</span><span>Last edited</span
         ><span class="text-right">Actions</span>
@@ -107,6 +107,7 @@ const template = (id: string) =>
         <div class="doctype muted">{{ row.original.type }}</div>
         <div class="muted">{{ timeAgo(row.original.edited) }}</div>
         <div class="row-actions">
+          <button class="btn primary" @click="addToOrder(row.original)">Add to order <AppIcon name="plus" /></button>
           <button class="btn" @click="openDesign(row.original)">
             Open in editor <AppIcon name="arrow" /></button
           ><DesignActions
@@ -123,3 +124,52 @@ const template = (id: string) =>
     </div></QueryState
   ><PageFooter />
 </template>
+<style scoped>
+.designs-list .table-head,
+.designs-list .doc-row {
+  grid-template-columns: minmax(180px, 1fr) 100px 110px 320px;
+}
+.designs-list .row-actions {
+  align-items: center;
+  gap: 8px;
+}
+.designs-list .row-actions .btn {
+  flex-shrink: 0;
+}
+@media (max-width: 1280px) {
+  .designs-list .table-head {
+    display: none;
+  }
+  .designs-list .doc-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .designs-list .doc-name {
+    grid-column: 1 / -1;
+    width: auto;
+  }
+  .designs-list .doctype {
+    display: none;
+  }
+  .designs-list .doc-row > .muted {
+    margin-left: 73px;
+  }
+}
+@media (max-width: 600px) {
+  .designs-list .doc-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .designs-list .doc-row > .muted {
+    margin-left: 67px;
+  }
+  .designs-list .row-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    width: 100%;
+  }
+  .designs-list .row-actions .btn {
+    justify-content: center;
+    white-space: normal;
+  }
+}
+</style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { useRoute } from "vue-router";
+import { computed, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useQuery } from "@tanstack/vue-query";
 import { GoApiError } from "@sizzle/api-client";
 import { money } from "@sizzle/utils";
@@ -8,6 +8,19 @@ import { api } from "../api";
 import PageHeading from "../components/PageHeading.vue";
 import PageFooter from "../components/PageFooter.vue";
 import QueryState from "../components/QueryState.vue";
+import { orderingApi, useOrder } from "../composables/useOrder";
+import { draftToken } from "@sizzle/api-client";
+import { isDemo } from "../api";
+import OrderProductionDetails from "../components/OrderProductionDetails.vue";
+const router = useRouter();
+const { accept } = useOrder();
+const reordering = ref(false), reorderError = ref("");
+async function reorder() {
+  reordering.value = true; reorderError.value = "";
+  try { const draft = await orderingApi.draft(); accept(await orderingApi.reorder(draftToken(draft), identifier.value)); await router.push("/order"); }
+  catch (error) { reorderError.value = error instanceof Error ? error.message : "Could not reorder. Please try again."; }
+  finally { reordering.value = false; }
+}
 const route = useRoute();
 const identifier = computed(() => String(route.params.id));
 const query = useQuery({
@@ -24,7 +37,10 @@ const date = (value: string) => new Date(value).toLocaleDateString();
   <RouterLink class="back" to="/orders">← Back to print orders</RouterLink>
   <QueryState :loading="query.isPending.value" :error="query.error.value" @retry="query.refetch()">
     <template v-if="order">
-      <PageHeading eyebrow="YOUR PRINT ORDER" :title="`Order #${order.id}`" :description="`Placed ${date(order.date)} · ${order.qty} printed menus`">
+      <div v-if="route.query.placed === '1'" class="panel" role="status"><h2>Your order has been submitted.</h2><p>We’ll review your artwork and specifications, then confirm pricing and delivery with a quote and invoice. No payment has been taken.</p></div>
+      <div v-if="reorderError" class="page-error" role="alert">{{ reorderError }}</div>
+      <PageHeading eyebrow="YOUR PRINT ORDER" :title="`Order #${order.id}`" :description="`Placed ${date(order.date)} · ${order.qty} physical units`">
+        <button v-if="!isDemo && order.items?.some(item => item.id)" class="btn" :disabled="reordering" @click="reorder">{{ reordering ? 'Adding…' : 'Reorder with latest artwork' }}</button>
         <span class="badge">{{ order.status }}</span>
       </PageHeading>
       <div class="detail-grid">
@@ -41,8 +57,9 @@ const date = (value: string) => new Date(value).toLocaleDateString();
             <h2>What’s in the box</h2>
             <template v-if="order.items?.length">
               <div v-for="(item, index) in order.items" :key="index" class="detail-line">
-                <div><strong>{{ item.name }}</strong><p>{{ item.quantity }} copies · {{ item.size }} · {{ item.sides }}</p><p>{{ item.paper }} · {{ item.finish }}</p></div>
-                <span>{{ money(item.amount) }} CAD</span>
+                <img v-if="item.id" :src="orderingApi.previewUrl(item.id)" :alt="`${item.name} ordered artwork`" style="width:56px;height:74px;object-fit:contain" loading="lazy" />
+                <div><small v-if="item.designName">{{ item.designName }}</small><strong style="display:block">{{ item.name }}</strong><p>{{ item.quantity }} {{ item.unit === 'cover' ? 'covers' : item.unit === 'sheet' ? 'sheets' : 'copies' }} · {{ item.size }} · {{ item.sides }}</p><p>{{ item.paper }} · {{ item.finish }}</p><OrderProductionDetails v-if="item.production" :production="item.production" /><small v-if="item.revision">Artwork version {{ item.revision }}</small></div>
+                <span>{{ item.amount == null ? 'Awaiting quote' : `${money(item.amount)} CAD` }}</span>
               </div>
             </template>
             <p v-else>{{ order.name }} · {{ order.qty }} copies<span v-if="order.paper"> · {{ order.paper }}</span></p>
@@ -54,7 +71,7 @@ const date = (value: string) => new Date(value).toLocaleDateString();
             <div v-if="order.subtotal != null" class="detail-line"><span>Subtotal</span><span>{{ money(order.subtotal) }}</span></div>
             <div v-if="order.shipping != null" class="detail-line"><span>Shipping</span><span>{{ money(order.shipping) }}</span></div>
             <div v-if="order.tax != null" class="detail-line"><span>Tax</span><span>{{ money(order.tax) }}</span></div>
-            <div class="detail-line order-summary-total"><strong>Total</strong><strong>{{ money(order.total) }} CAD</strong></div>
+            <div class="detail-line order-summary-total"><strong>Total</strong><strong>{{ order.total == null ? 'Awaiting quote' : `${money(order.total)} CAD` }}</strong></div>
             <p v-if="order.payment?.status">Payment: {{ order.payment.status }}</p>
             <p v-if="order.payment?.method">{{ order.payment.method }}</p>
           </section>

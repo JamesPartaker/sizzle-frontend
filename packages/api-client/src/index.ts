@@ -206,3 +206,4 @@ export type {
   GoDesignInput,
   GoUploadRequest,
 } from "./go-api";
+export * from "./ordering";

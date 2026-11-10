@@ -9,6 +9,8 @@ import { useQueryClient } from "@tanstack/vue-query";
 import { useRouter } from "vue-router";
 import { isDemo } from "../api";
 import WorkspaceDialogs from "./WorkspaceDialogs.vue";
+import { useOrder } from "../composables/useOrder";
+const { query: currentOrder } = useOrder();
 const route = useRoute();
 const router = useRouter();
 const queryClient = useQueryClient();
@@ -27,10 +29,11 @@ const navs = [
   { id: "designs", icon: "file", label: "My designs" },
   { id: "templates", icon: "grid", label: "Templates" },
   { id: "assets", icon: "image", label: "My assets" },
+  { id: "order", icon: "plus", label: "Your order" },
   { id: "orders", icon: "box", label: "Print orders" },
 ];
 const current = computed(() =>
-  route.path.startsWith("/orders") ? "orders" : String(route.name),
+  route.path.startsWith("/orders") ? "orders" : route.path === "/order" ? "order" : String(route.name),
 );
 watch(
   () => route.fullPath,
@@ -82,7 +85,7 @@ function undo() {
         }}</span
         ><span v-if="item.id === 'designs'" class="count">{{
           designs.data.value?.length || 0
-        }}</span></RouterLink
+        }}</span><span v-if="item.id === 'order' && currentOrder.data.value?.items.length" class="count">{{ currentOrder.data.value.items.length }}</span></RouterLink
       >
     </nav>
     <div class="sidebar-bottom">

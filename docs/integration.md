@@ -35,7 +35,7 @@ Sign out POSTs `/logout`, which returns 204, and clears the frontend query cache
 - Customer history: `GET /api/v1/orders`.
 - Customer detail: `GET /api/v1/orders/:id`; direct links fetch the selected order independently of the history query.
 
-Order status supports Pending, In production, Shipped, Delivered and Cancelled. Totals, tax, shipping, item specifications, addresses, payment status and tracking come from the stored order snapshot. Missing financial breakdowns remain absent rather than being calculated in the browser. Order creation, checkout and payment collection are outside this integration.
+Order status supports Pending, In production, Shipped, Delivered and Cancelled. Totals, tax, shipping, item specifications, addresses, payment status and tracking come from the stored order snapshot. Missing financial breakdowns remain absent rather than being calculated in the browser. Order creation and approval checkout use the shared `/order` draft flow. Totals remain null until manually quoted; no online payment is collected.
 
 Assets use their dedicated private upload service: reserve via `POST /api/v1/assets`, PUT the file to the signed URL, then POST `/api/v1/assets/:id/complete`. Lists, signed previews, deletion and workspace storage usage use the existing Go endpoints. Failed uploads attempt reservation cleanup. Previews are refreshed and signed URLs are never persisted locally.
 
@@ -49,7 +49,7 @@ User edits PUT `/api/v1/admin/users/:id`. Order status changes PUT `/api/v1/admi
 
 Design navigation opens `?documentId=<UUID>`; admin template navigation uses `?templateId=<UUID>`. API-mode load, revision-aware autosave, save-as-copy, immutable resource resolution, workspace assets and template library publication already use Go. Saves send `{Document,DocumentVersion:1,revision}` and receive `{revision,document}`. Revision conflicts pause autosave and support reload or saving a copy. Local editing without an ID remains available.
 
-PDF rendering is unchanged. AI editing and prepared asset variations remain local demo functionality.
+The editor saves before adding selected parts to the shared draft order. Set `SIZZLE_FRONTEND_ORIGIN` for links to the restaurant `/order` page. Customer printing and PDF/SVG/JSON document exports have been removed; internal production rendering remains available to administrators for exact ordered parts. AI editing and prepared asset variations remain local demo functionality.
 
 ## Checks
 

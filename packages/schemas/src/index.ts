@@ -47,7 +47,7 @@ export const orderSchema = z.object({
   qty: z.number(),
   date: z.string(),
   status: z.enum(["Pending", "In production", "Shipped", "Delivered", "Cancelled"]),
-  total: z.number(),
+  total: z.number().nullable(),
   delivery: z.string(),
   paper: z.string(),
   subtotal: z.number().nullable().optional(),
@@ -55,7 +55,7 @@ export const orderSchema = z.object({
   tax: z.number().nullable().optional(),
   shippingAddress: z.array(z.string()).optional(),
   billingAddress: z.array(z.string()).optional(),
-  items: z.array(z.object({ designId: z.string().optional(), name: z.string(), quantity: z.number(), size: z.string(), sides: z.string(), paper: z.string(), finish: z.string(), amount: z.number() })).optional(),
+  items: z.array(z.object({ id: z.string().optional(), designId: z.string().optional(), designName: z.string().optional(), revision: z.number().optional(), unit: z.string().optional(), pageIds: z.array(z.string()).optional(), production: z.record(z.string(),z.unknown()).optional(), name: z.string(), quantity: z.number(), size: z.string(), sides: z.string(), paper: z.string(), finish: z.string(), amount: z.number().nullable() })).optional(),
   payment: z.object({ status: z.string(), method: z.string() }).optional(),
   deliveryDetails: z.object({ method: z.string(), estimate: z.string(), carrier: z.string().nullable(), tracking: z.string().nullable() }).optional(),
 });

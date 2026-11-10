@@ -7,7 +7,7 @@ export const statuses: Record<Kind, string[]> = {
 };
 export interface AdminRecord {
   id: string; name: string; email: string; restaurant: string;
-  status: string; updatedAt: string; type: string; quantity: number; total: number;
+  status: string; updatedAt: string; type: string; quantity: number; total: number | null;
 }
 export interface UserDetails {
   id: string; name: string; email: string; restaurant: string; status: string;
@@ -34,10 +34,11 @@ export interface OrderDetails extends AdminRecord {
   placedAt: string;
   shippingAddress: string[];
   billingAddress: string[];
-  items: { designId: string; name: string; quantity: number; size: string; sides: string; paper: string; finish: string; amount: number }[];
-  subtotal: number;
-  shipping: number;
-  tax: number;
+  items: { id?: string; designId: string; designName?: string; revision?: number; unit?: string; production?: Record<string, unknown>; name: string; quantity: number; size: string; sides: string; paper: string; finish: string; amount: number | null }[];
+  subtotal: number | null;
+  shipping: number | null;
+  tax: number | null;
+  reference?: string;
   payment: { status: string; method: string; reference: string };
   delivery: { method: string; estimate: string; carrier: string | null; tracking: string | null };
   notes: string;
@@ -58,6 +59,7 @@ export interface AdminRepository {
   updateOrderStatus(id: string, status: string): Promise<void>;
 }
 const base = (import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? "http://localhost:1323" : window.location.origin)).replace(/\/$/, "");
+export const orderedArtworkUrl = (orderId: string, lineId: string) => `${base}/api/v1/admin/orders/${encodeURIComponent(orderId)}/items/${encodeURIComponent(lineId)}/artwork`;
 async function request<T>(path: string, signal?: AbortSignal, method = "GET", body?: unknown): Promise<T> {
   const response = await fetch(`${base}/api/v1/admin${path}`, {
     method, credentials: "include", cache: "no-store", signal,

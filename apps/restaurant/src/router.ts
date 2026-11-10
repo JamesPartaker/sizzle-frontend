@@ -6,6 +6,7 @@ export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior: () => ({ top: 0 }),
   routes: [
+    { path: "/order", name: "current-order", component: () => import("./views/CurrentOrderView.vue"), meta: { title: "Your order" } },
     { path: "/", redirect: "/dashboard" },
     { path: "/login", name: "login", component: () => import("./views/AuthView.vue"), meta: { title: "Sign in", authPage: true } },
     { path: "/register", name: "register", component: () => import("./views/AuthView.vue"), meta: { title: "Create an account", authPage: true } },
