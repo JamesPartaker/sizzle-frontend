@@ -41,11 +41,11 @@ const parts = {
   ],
 };
 
-async function setup(page: import("@playwright/test").Page) {
+async function setup(page: import("@playwright/test").Page, items: any[] = []) {
   let draft = {
     id: draftId,
     version: 0,
-    items: [] as any[],
+    items,
     checkout: emptyCheckout(),
     warnings: [] as string[],
   };
@@ -208,6 +208,12 @@ test("orders different cover and page quantities across documents, then submits 
     .getByRole("button", { name: "Add to order" })
     .click();
   await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(
+    page
+      .getByRole("dialog")
+      .getByRole("link", { name: "Saved version 1" })
+      .first(),
+  ).toHaveAttribute("href", new RegExp(`documentId=${dinnerId}.*revision=1`));
   await page.getByLabel("Cover quantity", { exact: true }).fill("10");
   await page.getByLabel("Menu page quantity", { exact: true }).fill("20");
   await page
@@ -261,6 +267,12 @@ test("orders different cover and page quantities across documents, then submits 
     page.getByText("15 sheets · Drinks page", { exact: true }),
   ).toBeVisible();
   await expect(
+    page
+      .locator(".order-review-line")
+      .first()
+      .getByRole("link", { name: "Version 1" }),
+  ).toHaveAttribute("href", new RegExp(`documentId=${dinnerId}.*revision=1`));
+  await expect(
     page.getByRole("button", { name: "Submit order for approval" }),
   ).toBeDisabled();
   await page
@@ -278,6 +290,43 @@ test("orders different cover and page quantities across documents, then submits 
     shipping: { line1: "1 Main Street" },
   });
   expect(submissions[0]).not.toHaveProperty("total");
+});
+
+test("links each order part to its pinned revision even when the document has a newer version", async ({
+  page,
+}) => {
+  await setup(page, [
+    {
+      ...parts[dinnerId][0],
+      id: "cover-line",
+      revision: 2,
+      latestRevision: 9,
+      quantity: 1,
+      available: true,
+    },
+    {
+      ...parts[dinnerId][1],
+      id: "page-line",
+      revision: 5,
+      latestRevision: 9,
+      quantity: 1,
+      available: true,
+    },
+  ]);
+  await page.goto("/order");
+  for (const revision of [2, 5]) {
+    const link = page.getByRole("link", {
+      name: `Saved version ${revision}`,
+      exact: true,
+    });
+    await expect(link).toBeVisible();
+    const url = new URL((await link.getAttribute("href"))!);
+    expect(url.searchParams.get("documentId")).toBe(dinnerId);
+    expect(url.searchParams.get("revision")).toBe(String(revision));
+    expect(url.searchParams.has("templateId")).toBe(false);
+    await expect(link).toHaveAttribute("target", "_blank");
+    await expect(link).toHaveAttribute("rel", "noopener noreferrer");
+  }
 });
 
 test("keeps the order reviewable after another workspace member changes it", async ({

@@ -14,6 +14,7 @@ import { orderingApi, useOrder } from "../composables/useOrder";
 import { useWorkspaceData } from "../composables/useWorkspaceData";
 import { useWorkspaceStore } from "../stores/workspace";
 import { isDemo } from "../api";
+import { editorOrigin } from "../api-origin";
 import PageHeading from "../components/PageHeading.vue";
 import PageFooter from "../components/PageFooter.vue";
 import QueryState from "../components/QueryState.vue";
@@ -124,6 +125,13 @@ const selectionValid = computed(
 function token() {
   if (!draft.value) throw new Error("Your order is still loading.");
   return draftToken(draft.value);
+}
+function revisionUrl(part: OrderPart) {
+  const url = new URL(editorOrigin, window.location.origin);
+  url.searchParams.delete("templateId");
+  url.searchParams.set("documentId", part.designId);
+  url.searchParams.set("revision", String(part.revision));
+  return url.href;
 }
 async function closeSource() {
   await router.replace({ path: "/order" });
@@ -379,7 +387,15 @@ const addressLines = (value: OrderCheckout["shipping"]) =>
                         : "One single-sided sheet per copy"
                     }}
                   </p>
-                  <small>Saved version {{ item.revision }}</small>
+                  <small
+                    ><a
+                      class="text-link"
+                      :href="revisionUrl(item)"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Saved version {{ item.revision }}</a
+                    ></small
+                  >
                   <p v-if="!item.available" class="validation-error">
                     Document unavailable. Remove this part to continue.
                   </p>
@@ -540,7 +556,16 @@ const addressLines = (value: OrderCheckout["shipping"]) =>
                     {{ item.unit === "cover" ? "covers" : "sheets" }} ·
                     {{ item.name }}</strong
                   >
-                  <p>{{ details(item) }} · Version {{ item.revision }}</p>
+                  <p>
+                    {{ details(item) }} ·
+                    <a
+                      class="text-link"
+                      :href="revisionUrl(item)"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >Version {{ item.revision }}</a
+                    >
+                  </p>
                   <OrderProductionDetails :production="item.production" />
                 </div>
               </div>
@@ -746,7 +771,15 @@ const addressLines = (value: OrderCheckout["shipping"]) =>
                     : "One single-sided sheet per copy"
                 }}
               </p>
-              <small>Saved version {{ part.revision }}</small>
+              <small
+                ><a
+                  class="text-link"
+                  :href="revisionUrl(part)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Saved version {{ part.revision }}</a
+                ></small
+              >
             </div>
             <label class="order-quantity"
               >{{ part.unit === "cover" ? "Covers" : "Sheets"
