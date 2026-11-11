@@ -29,6 +29,7 @@ const navs = [
   { id: "designs", icon: "file", label: "My designs" },
   { id: "templates", icon: "grid", label: "Templates" },
   { id: "assets", icon: "image", label: "My assets" },
+  { id: "data-management", icon: "database", label: "Data management" },
   { id: "order", icon: "plus", label: "Your order" },
   { id: "orders", icon: "box", label: "Print orders" },
 ];

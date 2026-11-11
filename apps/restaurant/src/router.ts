@@ -29,6 +29,12 @@ export const router = createRouter({
       meta: { title: "My designs" },
     },
     {
+      path: "/data-management/:section(menu-items)?",
+      name: "data-management",
+      component: () => import("./views/DataManagementView.vue"),
+      meta: { title: "Data management" },
+    },
+    {
       path: "/assets",
       name: "assets",
       component: () => import("./views/AssetsView.vue"),
