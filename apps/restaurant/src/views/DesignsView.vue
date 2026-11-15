@@ -14,7 +14,9 @@ import { useDesignActions } from "../composables/useDesignActions";
 import PageHeading from "../components/PageHeading.vue";
 import PageFooter from "../components/PageFooter.vue";
 import QueryState from "../components/QueryState.vue";
-const { ui, data, openDesign, duplicate, addToOrder } = useDesignActions();
+const { ui, data, hasEditor, editorHref, openDesign, duplicate, addToOrder } =
+  useDesignActions();
+const designLinkTag = hasEditor ? "a" : "button";
 const search = ref("");
 const sort = ref("newest");
 const sorting = computed<SortingState>(() => [
@@ -87,17 +89,32 @@ const template = (id: string) =>
         class="doc-row"
       >
         <div class="doc-name">
-          <div class="doc-thumb">
+          <component
+            :is="designLinkTag"
+            class="doc-thumb"
+            :href="editorHref(row.original)"
+            :type="hasEditor ? undefined : 'button'"
+            :aria-label="`Open ${row.original.name} in editor`"
+            @click="!hasEditor && openDesign(row.original)"
+          >
             <img v-if="row.original.thumbnailUrl" :src="row.original.thumbnailUrl" :alt="`${row.original.name} preview`" style="width:100%;height:100%;object-fit:contain" loading="lazy" />
             <MenuPreview
               v-else-if="template(row.original.template)"
               :template="template(row.original.template)!"
               :title="row.original.menuTitle"
             />
-          </div>
+          </component>
           <div>
-            <strong>{{ row.original.name }}</strong
-            ><small
+            <strong>
+              <component
+                :is="designLinkTag"
+                class="doc-title"
+                :href="editorHref(row.original)"
+                :type="hasEditor ? undefined : 'button'"
+                @click="!hasEditor && openDesign(row.original)"
+              >{{ row.original.name }}</component>
+            </strong>
+            <small
               >{{ row.original.pages }}
               {{ row.original.pages === 1 ? "page" : "pages" }} &nbsp; · &nbsp;
               A4 portrait &nbsp; · &nbsp; {{ row.original.status }}</small
@@ -125,6 +142,17 @@ const template = (id: string) =>
   ><PageFooter />
 </template>
 <style scoped>
+.doc-thumb,
+.doc-title {
+  padding: 0;
+}
+.doc-title {
+  font-weight: inherit;
+  text-align: start;
+}
+.doc-title:hover {
+  text-decoration: underline;
+}
 .designs-list .table-head,
 .designs-list .doc-row {
   grid-template-columns: minmax(180px, 1fr) 100px 110px 320px;

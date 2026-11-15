@@ -8,15 +8,17 @@ export function useDesignActions() {
   const ui = useWorkspaceStore();
   const data = useWorkspaceData();
   const router = useRouter();
+  const hasEditor = !isDemo || Boolean(import.meta.env.VITE_EDITOR_URL);
+  function editorHref(design: Design) {
+    if (!hasEditor) return undefined;
+    const url = new URL(editorOrigin, window.location.origin);
+    url.searchParams.set("documentId", design.id);
+    return url.href;
+  }
   function openDesign(design: Design) {
-    if (!isDemo || import.meta.env.VITE_EDITOR_URL) {
-      const url = new URL(
-        editorOrigin,
-        window.location.origin,
-      );
-      url.searchParams.set("documentId", design.id);
-      window.location.assign(url.href);
-    } else ui.previewDesign = design;
+    const href = editorHref(design);
+    if (href) window.location.assign(href);
+    else ui.previewDesign = design;
   }
   async function useTemplate(template: Template) {
     try {
@@ -46,5 +48,5 @@ export function useDesignActions() {
     ui.previewDesign = null;
     void router.push({ path: "/order", query: { design: design.id } });
   }
-  return { ui, data, openDesign, useTemplate, duplicate, addToOrder };
+  return { ui, data, hasEditor, editorHref, openDesign, useTemplate, duplicate, addToOrder };
 }
