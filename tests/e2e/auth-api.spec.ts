@@ -9,6 +9,21 @@ test.beforeEach(async ({ page }) => {
 });
 
 for (const mode of ["login", "register"]) {
+  test(`${mode} starts Google sign-in and displays a callback error`, async ({ page }) => {
+    const start = page.waitForRequest(request =>
+      request.isNavigationRequest() && new URL(request.url()).pathname === "/login/google",
+    );
+    await page.route("**/login/google", route => route.fulfill({
+      status: 303,
+      headers: { location: new URL("/login?error=provider", page.url()).href },
+    }));
+    await page.goto(`/${mode}`);
+    await page.getByRole("button", { name: "Continue with Google" }).click();
+    expect((await start).method()).toBe("GET");
+    await expect(page).toHaveURL(/\/login\?error=provider$/);
+    await expect(page.getByRole("alert")).toContainText("We couldn’t complete Google sign-in");
+  });
+
   test(`${mode} handles a server error, then a cookie-session success`, async ({ page }) => {
     const payloads: unknown[] = [];
     await page.route(`**/${mode}`, async route => {

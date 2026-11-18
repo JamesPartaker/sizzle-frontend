@@ -21,7 +21,9 @@ Restaurant data, assets and auth can be selected independently with `VITE_DATA_S
 
 Password login and registration POST `{emailAddress,password}` to `/login` and `/register`. Protected restaurant navigation loads `/api/v1/me`, redirects expired sessions to `/login`, and populates the restaurant and owner profile from the response. The Go endpoint reads the current active database user and workspace, returning `UserId`, `EmailAddress`, `WorkspaceId`, `Role`, `Name`, `Restaurant`, and `Status`. It never uses cached profile fields from the session as the response.
 
-Sign out POSTs `/logout`, which returns 204, and clears the frontend query cache and profile. Google sign-in is intentionally unconfigured; the button shows an availability message. Password recovery and AI prompt/chat are not connected.
+**Continue with Google** opens the Go API’s `/login/google` route. The API uses the Google OAuth credentials from its YAML config, sets the session cookie on success, and redirects to the restaurant dashboard. For local development, the Google client must authorize `http://localhost:1323/oauth/callback/google`.
+
+Sign out POSTs `/logout`, which returns 204, and clears the frontend query cache and profile. Password recovery and AI prompt/chat are not connected.
 
 ## Restaurant workspace
 

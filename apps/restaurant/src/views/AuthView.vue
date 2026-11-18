@@ -14,17 +14,23 @@ const email = ref("");
 const password = ref("");
 const visible = ref(false);
 const pending = ref(false);
-const message = ref(route.query.error === "profile" ? "We couldn’t load your profile. Please try signing in again." : "");
+const message = ref("");
 const error = ref(false);
 const info = ref<HTMLDialogElement | null>(null);
 const infoTitle = ref("");
 const infoCopy = ref("");
-watch(() => route.name, () => {
+const signInErrors: Record<string, string> = {
+  profile: "We couldn’t load your profile. Please try signing in again.",
+  provider: "We couldn’t complete Google sign-in. Please try again.",
+  "account-exists": "An account already uses that email. Sign in with your existing method.",
+  "google-unavailable": "Google sign-in is unavailable. Please use email and password.",
+};
+watch([() => route.name, () => route.query.error], ([, reason]) => {
   password.value = "";
   visible.value = false;
-  message.value = "";
-  error.value = false;
-});
+  message.value = typeof reason === "string" && Object.hasOwn(signInErrors, reason) ? signInErrors[reason]! : "";
+  error.value = Boolean(message.value);
+}, { immediate: true });
 function showInfo(kind: string) {
   const content: Record<string, [string, string]> = {
     reset: ["A fresh start.", "Password reset is not available yet. Please contact your Sizzle administrator for help accessing your account."],
@@ -69,8 +75,7 @@ async function submit() {
   }
 }
 function google() {
-  error.value = false;
-  message.value = "Google sign-in is not configured yet. Please use email and password.";
+  window.location.assign(authApi.auth.googleUrl);
 }
 </script>
 <template>
@@ -89,8 +94,8 @@ function google() {
 <div class="form-wrap">
 <h2>{{ registering ? 'Your next chapter starts here.' : 'Good to see you again.' }}</h2>
 <p class="intro">{{ registering ? 'Your restaurant’s creative home. Make it yours.' : 'Your next great menu is waiting. Let’s pick up where you left off.' }}</p>
-<button class="social" :disabled="pending" @click="google"><span class="google" aria-hidden="true">G</span>Continue with Google</button>
-<div class="divider">or continue with email</div>
+<button v-if="isLiveAuth" class="social" type="button" :disabled="pending" @click="google"><span class="google" aria-hidden="true">G</span>Continue with Google</button>
+<div v-if="isLiveAuth" class="divider">or continue with email</div>
 <form @submit.prevent="submit" :aria-busy="pending">
 <fieldset :disabled="pending" class="auth-fields">
 <div class="field"><label for="email">Email address</label><input id="email" v-model="email" name="emailAddress" type="email" placeholder="you@example.com" required autocomplete="username"></div>
